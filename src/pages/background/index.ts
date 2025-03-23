@@ -1,21 +1,9 @@
-import { Actions, ExtensionState, state } from "../state/extensionState";
-
-interface MessageWithoutPayload {
-	type: Actions.GET_STATE;
-	payload?: never;
-}
-
-interface MessageWithPayload {
-	type: Actions.SET_STATE;
-	payload: Partial<ExtensionState>;
-}
-
-type Message = MessageWithoutPayload | MessageWithPayload;
+import { Actions, state } from "../state/extensionState";
 
 chrome.runtime.onInstalled.addListener(() => {
 	chrome.storage.local.set(state);
 
-	chrome.runtime.onMessage.addListener((message: Message, _, sendResponse) => {
+	chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
 		if (message.type === Actions.GET_STATE) {
 			sendResponse(state);
 		}
@@ -25,4 +13,5 @@ chrome.runtime.onInstalled.addListener(() => {
 			chrome.storage.local.set(state);
 		}
 	});
+
 });

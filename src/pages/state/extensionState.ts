@@ -12,9 +12,15 @@ export enum Mode {
 
 export const state = proxy({
   mode: Mode.selective,
+  showTooltip: true,
+  selectedHighlightId: null
 });
 
-export type ExtensionState = typeof state;
+export type ExtensionState = {
+  mode: Mode,
+  showTooltip: boolean,
+  selectedHighlightId: null | number
+};
 
 export const updateState = (payload: Partial<typeof state>) => {
   chrome.runtime.sendMessage({ type: Actions.SET_STATE, payload });

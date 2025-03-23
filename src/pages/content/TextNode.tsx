@@ -9,7 +9,7 @@ const TextNode = ({text, state}) => {
 	}
 
 	return (
-		<span className={getColor()}>{text}</span>
+		<span className={getColor()} data-test="test123">{text}</span>
 	)
 }
 

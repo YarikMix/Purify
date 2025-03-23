@@ -17,8 +17,11 @@
   },
   "type": "module",
   "dependencies": {
+    "@types/mark.js": "^8.11.12",
     "axios": "^1.8.3",
     "hotkeys-js": "^3.13.9",
+    "jquery": "^3.7.1",
+    "mark.js": "^8.11.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "valtio": "^2.1.3",

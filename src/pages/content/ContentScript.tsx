@@ -1,84 +1,83 @@
 import useExtensionState from "@pages/hooks/useExtensionState";
-import {useEffect} from "react";
-import ReactDOMServer from "react-dom/server"
-import TextNode from "@pages/content/TextNode";
+import {useEffect, useRef, useState} from "react";
 import {Mode} from "@pages/state/extensionState";
-import hotkeys from "hotkeys-js";
-import axios from "axios";
+import "./style.css"
 
+type HightlightPos = {
+	left: number,
+	top: number
+}
 
 const ContentScript = () => {
-	const {mode} = useExtensionState();
+	const {mode, showTooltip, selectedHighlightId} = useExtensionState();
+
+	const tooltipRef = useRef<HTMLElement | null>(null)
 
 	console.log("ContentScript")
 	console.log("mode", mode)
 
-	const analyzeText = async () => {
-		console.log("switchText")
-		console.log(window.getSelection().toString())
+	const [pos, setPos] = useState<HightlightPos>({
+		left: 0,
+		top: 0
+	})
 
-		const message = window.getSelection().toString()
+	const moveToolbarToHighlight = (selectedHighlightId) => {
+		console.log("moveToolbarToHighlight")
+		console.log("selectedHighlightId", selectedHighlightId)
 
-		console.log("message", message)
+		const highlightEl = document.querySelector(`highlighter-span[data-highlight-id='${selectedHighlightId}']`)
+		console.log("highlightEl", highlightEl)
 
-		const response = await axios.post('http://127.0.0.1:8080/api/v1/analyze_text', {
-			"text": message
-		})
+		const boundingRect = highlightEl.getBoundingClientRect();
+		const toolWidth = 108; // When changing this, also update the width in css #highlighter--hover-tools--container
 
-		console.log(response)
+		const tooltipHeight = tooltipRef.current?.getBoundingClientRect().height
+		const tooltipOffset = 5
 
-		const data = response.data.response
-
-		console.log("data", data)
-
-		// Gets the selection range
-		// This is from Tim Down, linked below
-		let range, sel = window.getSelection();
-		if (sel.rangeCount && sel.getRangeAt) {
-			range = sel.getRangeAt(0);
-		}
-
-		// Creates a new node range
-		document.designMode = "on";
-		if (range) {
-			sel.removeAllRanges();
-			sel.addRange(range);
-		}
-
-
-		// This is from user YeppThatsMe, also linked below
-		// document.execCommand("insertHTML", false, `<span id='${uuid}' style="background: blue">`+ document.getSelection()+"</span>");
-		document.execCommand("insertHTML", false, ReactDOMServer.renderToStaticMarkup(
-			data.map(node => <TextNode text={node.text} state={node.state} />)
-		));
-
-		document.designMode = "off";
+		setPos({
+			top: boundingRect.top - tooltipHeight - tooltipOffset,
+			left: boundingRect.left + (boundingRect.width / 2) - (toolWidth / 2)
+		});
 	}
 
 	useEffect(() => {
-		if (mode == Mode.fullPage) {
-			console.log("ASDFSDAFASDSAADFSFDSFSSFAD")
-			hotkeys.unbind('g');
-
-			// TODO
-			// axios.post('http://127.0.0.1:8080/api/v1/analyze_text', {
-			// 	"text": document.body.innerText
-			// })
-
-		} else {
-			console.log("hotkey")
-			hotkeys('g', (e) => {
-				e.preventDefault()
-
-				analyzeText()
-			});
+		if (showTooltip && selectedHighlightId) {
+			moveToolbarToHighlight(selectedHighlightId)
 		}
-	}, [mode]);
+	}, [showTooltip, selectedHighlightId]);
+
+
+	// useEffect(() => {
+	// 	if (mode == Mode.fullPage) {
+	// 		console.log("ASDFSDAFASDSAADFSFDSFSSFAD")
+	// 		hotkeys.unbind('g');
+	//
+	// 		// TODO
+	// 		// axios.post('http://127.0.0.1:8080/api/v1/analyze_text', {
+	// 		// 	"text": document.body.innerText
+	// 		// })
+	//
+	// 	} else {
+	// 		console.log("hotkey")
+	// 		hotkeys('g', (e) => {
+	// 			e.preventDefault()
+	//
+	// 			analyzeText()
+	// 		});
+	// 	}
+	// }, [mode]);
 
 	return (
 		<div>
-			AAASDFASDFASDFASDFASFDASDF
+			AAASDFASDFASDFASDFASFDASDF1
 			<div>{mode === Mode.fullPage ? "Меняем текст на всей странице" : "Меняем текст по хоткею"}</div>
+			{showTooltip &&
+				<div className="tooltip" style={{top: pos.top, left: pos.left}} ref={tooltipRef}>
+					<span className="tooltiptext">
+						Показываем тултип
+					</span>
+				</div>
+			}
 		</div>
 	)
 }

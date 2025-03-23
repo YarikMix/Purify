@@ -1,5 +1,17 @@
-@import "tailwindcss";
+/* Tooltip container */
+.tooltip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    padding: 6px;
+    border-radius: 6px;
+    background-color: black;
+}
 
-.your-class {
-    color: aliceblue;
+/* Tooltip text */
+.tooltip .tooltiptext {
+    width: 120px;
+    color: #fff;
+    text-align: center;
 }
