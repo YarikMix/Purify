@@ -76,7 +76,7 @@ function getCurrentColor() {
     return colorOptions.find((colorOption) => colorOption.title === colorTitle) || colorOptions[0];
 }
 
-async function create(color, selection = window.getSelection()) {
+async function create(color, selection = window.getSelection(), text = window.getSelection().toString()) {
     console.log("create")
     const selectionString = selection.toString();
     if (!selectionString) return;
@@ -87,23 +87,10 @@ async function create(color, selection = window.getSelection()) {
         container = container.parentNode as HTMLElement;
     }
 
-    const response = await axios.post('http://127.0.0.1:8080/api/v1/analyze_text', {
-        "text": selectionString
-    })
-
-    console.log(response.data)
-
-    response.data.response.map(item => {
-        if (item.state == 2 || item.state == 1) {
-            console.log("highlight")
-            highlight(item.text, container, selection, color.color, color.textColor);
-        }
-    })
-
-
+    highlight(text, container, selection, color.color, color.textColor);
 }
 
-const analyzeText = async () => {
+const analyzePage = async () => {
     console.log("analyzeText")
     const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     const allTextNodes = [];
@@ -118,12 +105,12 @@ const analyzeText = async () => {
     console.log(ranges)
 }
 
-const doReplacement = () => {
-    const str = "форумов"
-
+const processText = (root=document.body, str="форумов", start, end) => {
+    console.log("processText")
+    console.log("str", str)
     // Find all text nodes in the article. We'll search within
     // these text nodes.
-    const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     const allTextNodes = [];
     let currentNode = treeWalker.nextNode();
     while (currentNode) {
@@ -134,15 +121,18 @@ const doReplacement = () => {
     // Iterate over all text nodes and find matches.
     const ranges = allTextNodes
         .map((el) => {
-            return { el, text: el.textContent.toLowerCase() };
+            return { el, text: el.textContent };
         })
         .map(({ text, el }) => {
             const indices = [];
             let startPos = 0;
             while (startPos < text.length) {
                 const index = text.indexOf(str, startPos);
+                console.log("index", index)
                 if (index === -1) break;
-                indices.push(index);
+                if (index >= start && index <= end) {
+                    indices.push(index);
+                }
                 startPos = index + str.length;
             }
 
@@ -156,7 +146,9 @@ const doReplacement = () => {
             });
         });
 
-    processRange(ranges.filter(range => range.length))
+    console.log("ranges", ranges)
+
+    processRange(ranges)
 }
 
 const processRange = (range) => {
@@ -164,6 +156,11 @@ const processRange = (range) => {
         range.forEach(r => processRange(r))
         return
     }
+
+    // TODO
+    // if (!range.length) {
+    //     return;
+    // }
 
     let container = range.commonAncestorContainer as HTMLElement;
 
@@ -182,19 +179,46 @@ const processRange = (range) => {
     create(getCurrentColor(), selection);
 }
 
+hotkeys('g', async (e) => {
+    e.preventDefault()
+
+    console.log("hotkey press")
+
+    const selection = window.getSelection();
+
+    if (!selection?.focusNode) {
+        return
+    }
+
+    const text = selection.toString()
+
+    const response = await axios.post('http://127.0.0.1:8080/api/v1/analyze_text', {
+        "text": text
+    })
+
+    console.log(response.data)
+
+    const start = selection.focusNode.textContent.indexOf(text);
+    const end = text.length + start;
+
+    const parent = selection.focusNode.parentElement as HTMLElement
+
+    response.data.response.map(item => {
+        if (item.state == 2 || item.state == 1) {
+            processText(parent, item.text, start, end)
+        }
+    })
+});
+
 const initialize = () => {
     console.log("initialize")
     // initializeHoverTools();
 
-    analyzeText()
+    // analyzePage()
 
     // doReplacement()
 
-    hotkeys('g', async (e) => {
-        e.preventDefault()
 
-        await create(getCurrentColor())
-    });
 }
 
 

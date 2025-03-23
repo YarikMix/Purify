@@ -135,7 +135,7 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
         highlightNode.style.backgroundColor = color;
         highlightNode.dataset.highlightId = crypto.randomUUID();
         highlightNode.style.color = textColor;
-        highlightNode.textContent = "Ой";
+        highlightNode.textContent = selectionString;
         highlightTextEl.remove();
         parent.insertBefore(highlightNode, insertBeforeElement);
     });

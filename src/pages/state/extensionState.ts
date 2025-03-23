@@ -12,7 +12,7 @@ export enum Mode {
 
 export const state = proxy({
   mode: Mode.selective,
-  showTooltip: true,
+  showTooltip: false,
   selectedHighlightId: null
 });
 

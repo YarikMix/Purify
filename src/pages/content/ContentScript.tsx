@@ -46,6 +46,8 @@ const ContentScript = () => {
 		}
 	}, [showTooltip, selectedHighlightId]);
 
+	console.log("pos", pos)
+	console.log("showTooltip", showTooltip)
 
 	// useEffect(() => {
 	// 	if (mode == Mode.fullPage) {
