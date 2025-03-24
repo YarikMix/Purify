@@ -1,8 +1,17 @@
 import { DELETED_CLASS, HIGHLIGHT_CLASS } from './constants.js';
 
-import { initializeHighlightEventListeners } from '../../hoverTools/index.js';
 
 import $ from "jquery";
+import {hideTooltip, showTooltip} from "@pages/content";
+
+const initializeHighlightEventListeners = (highlightElement:HTMLElement) => {
+    // highlightElement.addEventListener('mouseenter', onHighlightMouseEnterOrClick);
+    // highlightElement.addEventListener('click', onHighlightMouseEnterOrClick);
+    // highlightElement.addEventListener('mouseleave', onHighlightMouseLeave);
+
+    highlightElement.addEventListener('mouseenter', () => showTooltip(highlightElement.dataset.highlightId));
+    highlightElement.addEventListener('mouseleave', hideTooltip);
+}
 
 function highlight(selString, container, selection, color, textColor) {
     const highlightInfo = {

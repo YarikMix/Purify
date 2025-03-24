@@ -1,5 +1,4 @@
 import Toggle from "@pages/popup/components/Toggle/Toggle";
-import {useState} from "react";
 import KeyboardTooltip from "@pages/popup/components/KeyboardTooltip/KeyboardTooltip";
 
 const Aggression = () => {
