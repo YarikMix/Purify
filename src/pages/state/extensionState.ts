@@ -11,14 +11,16 @@ export enum Mode {
 }
 
 export const state = proxy({
+  enabled: true,
   mode: Mode.selective,
   showTooltip: false,
   selectedHighlightId: null
 });
 
 export type ExtensionState = {
-  mode: Mode,
-  showTooltip: boolean,
+  enabled: boolean
+  mode: Mode
+  showTooltip: boolean
   selectedHighlightId: null | number
 };
 
