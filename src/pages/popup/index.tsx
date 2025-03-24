@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import '@pages/popup/index.css';
 import '@assets/styles/tailwind.css';
-import Popup from '@pages/popup/Popup';
+import Popup from '@pages/popup/components/Popup/Popup';
 import {MemoryRouter as Router} from 'react-router-dom';
 
 function init() {

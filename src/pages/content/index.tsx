@@ -38,7 +38,7 @@ try {
 }
 
 import hotkeys from "hotkeys-js";
-import highlight from "@pages/content/highlight/highlight/highlight";
+import highlight from "@pages/content/highlight/highlight";
 import {updateState} from "@pages/state/extensionState";
 import axios from "axios";
 
@@ -103,6 +103,12 @@ const analyzePage = async () => {
     const ranges = allTextNodes.map(el => el.textContent.trim()).filter(el => el.length > 0)
 
     console.log(ranges)
+
+    const sum = ranges.reduce(
+        (accumulator, currentValue) => accumulator + currentValue.length,
+        0,
+    )
+    console.log(sum)
 }
 
 const processText = (root=document.body, str="форумов", start, end) => {
@@ -186,37 +192,50 @@ hotkeys('g', async (e) => {
 
     const selection = window.getSelection();
 
-    if (!selection?.focusNode) {
+    if (!selection?.focusNode?.textContent) {
         return
     }
 
     const text = selection.toString()
 
-    const response = await axios.post('http://127.0.0.1:8080/api/v1/analyze_text', {
-        "text": text
-    })
-
-    console.log(response.data)
+    // const response = await axios.post('http://127.0.0.1:8080/api/v1/analyze_text', {
+    //     "text": text
+    // })
+    //
+    // console.log(response.data)
+    //
+    // const start = selection.focusNode.textContent.indexOf(text);
+    // const end = text.length + start;
+    //
+    // const parent = selection.focusNode.parentElement as HTMLElement
+    //
+    // response.data.response.map(item => {
+    //     if (item.state == 2 || item.state == 1) {
+    //         processText(parent, item.text, start, end)
+    //     }
+    // })
 
     const start = selection.focusNode.textContent.indexOf(text);
     const end = text.length + start;
 
     const parent = selection.focusNode.parentElement as HTMLElement
 
-    response.data.response.map(item => {
-        if (item.state == 2 || item.state == 1) {
-            processText(parent, item.text, start, end)
-        }
-    })
+    processText(parent, text, start, end)
 });
+
+hotkeys('h', () => {
+    analyzePage()
+})
 
 const initialize = () => {
     console.log("initialize")
     // initializeHoverTools();
 
-    // analyzePage()
+    analyzePage()
 
     // doReplacement()
+
+
 
 
 }

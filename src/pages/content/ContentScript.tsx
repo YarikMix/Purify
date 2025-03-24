@@ -1,6 +1,5 @@
 import useExtensionState from "@pages/hooks/useExtensionState";
 import {useEffect, useRef, useState} from "react";
-import {Mode} from "@pages/state/extensionState";
 import "./style.css"
 
 type HightlightPos = {
@@ -11,7 +10,7 @@ type HightlightPos = {
 const ContentScript = () => {
 	const {mode, showTooltip, selectedHighlightId} = useExtensionState();
 
-	const tooltipRef = useRef<HTMLElement | null>(null)
+	const tooltipRef = useRef<HTMLDivElement>(null)
 
 	console.log("ContentScript")
 	console.log("mode", mode)
@@ -21,12 +20,16 @@ const ContentScript = () => {
 		top: 0
 	})
 
-	const moveToolbarToHighlight = (selectedHighlightId) => {
+	const moveToolbarToHighlight = (selectedHighlightId:string) => {
 		console.log("moveToolbarToHighlight")
 		console.log("selectedHighlightId", selectedHighlightId)
 
 		const highlightEl = document.querySelector(`highlighter-span[data-highlight-id='${selectedHighlightId}']`)
 		console.log("highlightEl", highlightEl)
+
+		if (!highlightEl || !tooltipRef.current) {
+			return
+		}
 
 		const boundingRect = highlightEl.getBoundingClientRect();
 		const toolWidth = 108; // When changing this, also update the width in css #highlighter--hover-tools--container
@@ -45,9 +48,6 @@ const ContentScript = () => {
 			moveToolbarToHighlight(selectedHighlightId)
 		}
 	}, [showTooltip, selectedHighlightId]);
-
-	console.log("pos", pos)
-	console.log("showTooltip", showTooltip)
 
 	// useEffect(() => {
 	// 	if (mode == Mode.fullPage) {
@@ -69,19 +69,15 @@ const ContentScript = () => {
 	// 	}
 	// }, [mode]);
 
-	return (
-		<div>
-			AAASDFASDFASDFASDFASFDASDF1
-			<div>{mode === Mode.fullPage ? "Меняем текст на всей странице" : "Меняем текст по хоткею"}</div>
-			{showTooltip &&
-				<div className="tooltip" style={{top: pos.top, left: pos.left}} ref={tooltipRef}>
-					<span className="tooltiptext">
-						Показываем тултип
-					</span>
-				</div>
-			}
-		</div>
-	)
+	if (showTooltip) {
+		return (
+			<div className="tooltip" style={{top: pos.top, left: pos.left}} ref={tooltipRef}>
+				<span className="tooltiptext">
+					Показываем тултип
+				</span>
+			</div>
+		)
+	}
 }
 
 export default ContentScript

@@ -1,4 +1,4 @@
-import { DELETED_CLASS, HIGHLIGHT_CLASS } from './constants.js';
+import { DELETED_CLASS, HIGHLIGHT_CLASS } from './constants';
 
 
 import $ from "jquery";
@@ -141,9 +141,15 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
         // Using a custom element instead of a span prevents any outside styles on spans from affecting the highlight
         const highlightNode = document.createElement('highlighter-span');
         highlightNode.classList.add((color === 'inherit') ? DELETED_CLASS : HIGHLIGHT_CLASS);
-        highlightNode.style.backgroundColor = color;
+
+        // highlightNode.style.backgroundColor = color;
+        // highlightNode.style.color = textColor;
+
+        highlightNode.style.color = "transparent";
+        highlightNode.style.userSelect = "none";
+        highlightNode.style.textShadow = "0 0 5px rgba(0,0,0,0.5)";
+
         highlightNode.dataset.highlightId = crypto.randomUUID();
-        highlightNode.style.color = textColor;
         highlightNode.textContent = selectionString;
         highlightTextEl.remove();
         parent.insertBefore(highlightNode, insertBeforeElement);

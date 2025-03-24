@@ -12,6 +12,11 @@ export enum Mode {
 
 export const state = proxy({
   enabled: true,
+  aggressionFilterEnabled: true,
+  preconceptionEnabled: true,
+  preconceptionMode: Mode.selective,
+  agitationEnabled: true,
+
   mode: Mode.selective,
   showTooltip: false,
   selectedHighlightId: null
@@ -19,6 +24,8 @@ export const state = proxy({
 
 export type ExtensionState = {
   enabled: boolean
+  aggressionFilterEnabled: boolean;
+  aggressionFilterMode: Mode;
   mode: Mode
   showTooltip: boolean
   selectedHighlightId: null | number
