@@ -1,10 +1,9 @@
-import { DELETED_CLASS, HIGHLIGHT_CLASS } from '../highlight/constants';
-
 
 import $ from "jquery";
+import {DELETED_CLASS, HIGHLIGHT_CLASS} from "@pages/content/highlight/constants";
 import {hideTooltip, showTooltip} from "@pages/content";
 
-const initializeHighlightEventListeners = (highlightElement:HTMLElement) => {
+function initializeHighlightEventListeners(highlightElement) {
 	// highlightElement.addEventListener('mouseenter', onHighlightMouseEnterOrClick);
 	// highlightElement.addEventListener('click', onHighlightMouseEnterOrClick);
 	// highlightElement.addEventListener('mouseleave', onHighlightMouseLeave);
@@ -13,11 +12,13 @@ const initializeHighlightEventListeners = (highlightElement:HTMLElement) => {
 	highlightElement.addEventListener('mouseleave', hideTooltip);
 }
 
-function highlight(selString, container, selection, color, textColor) {
+function highlight(from, to, container, selection, color, textColor) {
+	console.log("highlight")
 	const highlightInfo = {
 		color: color ? color : "yellow",
 		textColor: textColor ? textColor : "inherit",
-		selectionString: selString,
+		from: from,
+		to: to,
 		anchor: $(selection.anchorNode),
 		anchorOffset: selection.anchorOffset,
 		focus: $(selection.focusNode),
@@ -59,8 +60,8 @@ function recursiveWrapper(container, highlightInfo) {
 
 function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighted) {
 	console.log("_recursiveWrapper")
-	const { anchor, focus, anchorOffset, focusOffset, color, textColor, selectionString } = highlightInfo;
-	const selectionLength = selectionString.length;
+	const { anchor, focus, anchorOffset, focusOffset, color, textColor, from, to } = highlightInfo;
+	const selectionLength = from.length;
 
 	container.contents().each((_index, element) => {
 		if (charsHighlighted >= selectionLength) return; // Stop early if we are done highlighting
@@ -96,7 +97,7 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
 		if (startIndex > nodeValue.length) {
 			// Start index is beyond the length of the text node, can't find the highlight
 			// NOTE: we allow the start index to be equal to the length of the text node here just in case
-			throw new Error(`No match found for highlight string '${selectionString}'`);
+			throw new Error(`No match found for highlight string '${from}'`);
 		}
 
 		// Split the text content into three parts, the part before the highlight, the highlight and the part after the highlight:
@@ -108,17 +109,17 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
 		for (; i < nodeValue.length; i++) {
 			// Skip any whitespace characters in the selection string as there can
 			// be more than in the text node:
-			while (charsHighlighted < selectionLength && selectionString[charsHighlighted].match(/\s/u)) charsHighlighted++;
+			while (charsHighlighted < selectionLength && from[charsHighlighted].match(/\s/u)) charsHighlighted++;
 
 			if (charsHighlighted >= selectionLength) break;
 
 			const char = nodeValue[i];
-			if (char === selectionString[charsHighlighted]) {
+			if (char === from[charsHighlighted]) {
 				charsHighlighted++;
 			} else if (!char.match(/\s/u)) {
 				// Similarly, if the char in the text node is a whitespace, ignore any differences
 				// Otherwise, we can't find the highlight text; throw an error
-				throw new Error(`No match found for highlight string '${selectionString}'`);
+				throw new Error(`No match found for highlight string '${from}'`);
 			}
 		}
 
@@ -141,16 +142,11 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
 		// Using a custom element instead of a span prevents any outside styles on spans from affecting the highlight
 		const highlightNode = document.createElement('highlighter-span');
 		highlightNode.classList.add((color === 'inherit') ? DELETED_CLASS : HIGHLIGHT_CLASS);
-
-		// highlightNode.style.backgroundColor = color;
-		// highlightNode.style.color = textColor;
-
-		highlightNode.style.color = "transparent";
-		highlightNode.style.userSelect = "none";
-		highlightNode.style.textShadow = "0 0 5px rgba(0,0,0,0.5)";
-
+		highlightNode.style.backgroundColor = color;
 		highlightNode.dataset.highlightId = crypto.randomUUID();
-		highlightNode.textContent = selectionString;
+		highlightNode.dataset.original = from;
+		highlightNode.style.color = textColor;
+		highlightNode.textContent = to;
 		highlightTextEl.remove();
 		parent.insertBefore(highlightNode, insertBeforeElement);
 	});

@@ -2,9 +2,12 @@ import {throttle} from "throttle-debounce";
 import {isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/highlight";
+import {state} from "@pages/state/extensionState";
 
 document.addEventListener("scroll", throttle(100, () => {
-	analyzeAggression()
+	if (state.aggressionFilterEnabled) {
+		analyzeAggression()
+	}
 }))
 
 const analyzedBlocks = []

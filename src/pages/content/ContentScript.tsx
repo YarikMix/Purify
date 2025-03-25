@@ -44,7 +44,7 @@ const ContentScript = () => {
 			left: boundingRect.left + (boundingRect.width / 2) - (toolWidth / 2)
 		});
 
-		setText(highlightEl.textContent)
+		setText("Оригинал: " + highlightEl.dataset.original)
 	}
 
 	useEffect(() => {
