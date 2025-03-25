@@ -71,17 +71,8 @@ export const DEFAULT_COLORS = [
 ];
 
 
-function getCurrentColor(type) {
+function getCurrentColor() {
     console.log("getCurrentColor")
-    console.log("type", type)
-
-    if (type == 1) {
-        return {
-            title: 'yellow',
-            color: 'rgb(255, 246, 21)',
-            textColor: 'rgb(255, 255, 255)',
-        }
-    }
 
     return {
         title: 'blue',
@@ -116,7 +107,6 @@ hotkeys('g', async (e) => {
     console.log(response.data)
 
 
-
     // response.data.response.map(item => {
     //     if (item.state == 2 || item.state == 1) {
     //         processText(parent, item.text, start, end)
@@ -134,13 +124,13 @@ hotkeys('g', async (e) => {
         block.result.forEach(item => {
             console.log("item", item)
 
-            processText(parent, item.from, item.to, item.type, start, end)
+            processText(parent, item.from, item.to, start, end)
         })
     })
 });
 
 
-const processText = (root=document.body, from, to, state, start, end) => {
+const processText = (root=document.body, from, to, start, end) => {
     console.log("processText")
     console.log("from", from)
     console.log("to", to)
@@ -184,12 +174,12 @@ const processText = (root=document.body, from, to, state, start, end) => {
             });
         });
 
-    processRange(ranges, state, from, to)
+    processRange(ranges, from, to)
 }
 
-const processRange = (range, state, from, to) => {
+const processRange = (range, from, to) => {
     if (Array.isArray(range)) {
-        range.forEach(r => processRange(r, state, from, to))
+        range.forEach(r => processRange(r, from, to))
         return
     }
 
@@ -212,7 +202,7 @@ const processRange = (range, state, from, to) => {
     selection.removeAllRanges();
     selection.addRange(r);
 
-    const color = getCurrentColor(state)
+    const color = getCurrentColor()
 
     console.log("create")
     const selectionString = selection.toString();
