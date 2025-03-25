@@ -1,22 +1,19 @@
-import { DELETED_CLASS, HIGHLIGHT_CLASS } from '../highlight/constants';
+import { HIGHLIGHT_CLASS } from '../highlight/constants';
 
 
 import $ from "jquery";
-import {hideTooltip, showTooltip} from "@pages/content";
 
-const initializeHighlightEventListeners = (highlightElement:HTMLElement) => {
-    // highlightElement.addEventListener('mouseenter', onHighlightMouseEnterOrClick);
-    // highlightElement.addEventListener('click', onHighlightMouseEnterOrClick);
-    // highlightElement.addEventListener('mouseleave', onHighlightMouseLeave);
+// const initializeHighlightEventListeners = (highlightElement:HTMLElement) => {
+//     // highlightElement.addEventListener('mouseenter', onHighlightMouseEnterOrClick);
+//     // highlightElement.addEventListener('click', onHighlightMouseEnterOrClick);
+//     // highlightElement.addEventListener('mouseleave', onHighlightMouseLeave);
+//
+//     highlightElement.addEventListener('mouseenter', () => showTooltip(highlightElement.dataset.highlightId));
+//     highlightElement.addEventListener('mouseleave', hideTooltip);
+// }
 
-    highlightElement.addEventListener('mouseenter', () => showTooltip(highlightElement.dataset.highlightId));
-    highlightElement.addEventListener('mouseleave', hideTooltip);
-}
-
-function highlight(selString, container, selection, color, textColor) {
+function blur(selString, container, selection) {
     const highlightInfo = {
-        color: color ? color : "yellow",
-        textColor: textColor ? textColor : "inherit",
         selectionString: selString,
         anchor: $(selection.anchorNode),
         anchorOffset: selection.anchorOffset,
@@ -45,10 +42,10 @@ function highlight(selString, container, selection, color, textColor) {
     if (selection.removeAllRanges) selection.removeAllRanges();
 
     // Step 4:
-    const parent = $(container).parent();
-    parent.find(`.${HIGHLIGHT_CLASS}`).each((_i, el) => {
-        initializeHighlightEventListeners(el);
-    });
+    // const parent = $(container).parent();
+    // parent.find(`.${HIGHLIGHT_CLASS}`).each((_i, el) => {
+    //     initializeHighlightEventListeners(el);
+    // });
 
     return true; // No errors
 }
@@ -59,7 +56,7 @@ function recursiveWrapper(container, highlightInfo) {
 
 function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighted) {
     console.log("_recursiveWrapper")
-    const { anchor, focus, anchorOffset, focusOffset, color, textColor, selectionString } = highlightInfo;
+    const { anchor, focus, anchorOffset, focusOffset, selectionString } = highlightInfo;
     const selectionLength = selectionString.length;
 
     container.contents().each((_index, element) => {
@@ -140,7 +137,7 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
         // Wrap the highlighted text in a custom element with the highlight class name
         // Using a custom element instead of a span prevents any outside styles on spans from affecting the highlight
         const highlightNode = document.createElement('highlighter-span');
-        highlightNode.classList.add((color === 'inherit') ? DELETED_CLASS : HIGHLIGHT_CLASS);
+        highlightNode.classList.add(HIGHLIGHT_CLASS);
 
         // highlightNode.style.backgroundColor = color;
         // highlightNode.style.color = textColor;
@@ -158,4 +155,4 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
     return [startFound, charsHighlighted];
 }
 
-export default highlight;
+export default blur;
