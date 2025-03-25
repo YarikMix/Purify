@@ -12,9 +12,9 @@ import $ from "jquery";
 //     highlightElement.addEventListener('mouseleave', hideTooltip);
 // }
 
-function blur(selString, container, selection) {
+function blur(selection, container) {
     const highlightInfo = {
-        selectionString: selString,
+        selectionString: selection.toString(),
         anchor: $(selection.anchorNode),
         anchorOffset: selection.anchorOffset,
         focus: $(selection.focusNode),

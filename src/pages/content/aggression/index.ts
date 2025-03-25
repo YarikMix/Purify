@@ -111,7 +111,7 @@ const processRange = (range) => {
 
 		const selectionString = selection.toString();
 		if (selectionString)
-			highlight(selection.toString(), container, selection);
+			highlight(selection, container);
 
 	} catch {
 		console.log("ERROR")
