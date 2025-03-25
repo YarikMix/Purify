@@ -10,7 +10,7 @@ type HightlightPos = {
 const ContentScript = () => {
 	const {mode, showTooltip, selectedHighlightId} = useExtensionState();
 
-	const tooltipRef = useRef<HTMLDivElement>(null)
+	const tooltipRef = useRef<HTMLDivElement | null>(null)
 
 	console.log("ContentScript")
 	console.log("mode", mode)
@@ -19,6 +19,8 @@ const ContentScript = () => {
 		left: 0,
 		top: 0
 	})
+
+	const [text, setText] = useState("")
 
 	const moveToolbarToHighlight = (selectedHighlightId:string) => {
 		console.log("moveToolbarToHighlight")
@@ -41,6 +43,8 @@ const ContentScript = () => {
 			top: boundingRect.top - tooltipHeight - tooltipOffset,
 			left: boundingRect.left + (boundingRect.width / 2) - (toolWidth / 2)
 		});
+
+		setText(highlightEl.textContent)
 	}
 
 	useEffect(() => {
@@ -69,11 +73,13 @@ const ContentScript = () => {
 	// 	}
 	// }, [mode]);
 
+	console.log("showTooltip", showTooltip)
+
 	if (showTooltip) {
 		return (
 			<div className="tooltip" style={{top: pos.top, left: pos.left}} ref={tooltipRef}>
 				<span className="tooltiptext">
-					Показываем тултип
+					{text}
 				</span>
 			</div>
 		)

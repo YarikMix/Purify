@@ -1,4 +1,4 @@
-import { DELETED_CLASS, HIGHLIGHT_CLASS } from './constants';
+import { DELETED_CLASS, HIGHLIGHT_CLASS } from '../highlight/constants';
 
 
 import $ from "jquery";

@@ -8,7 +8,7 @@ div.id = '__root';
 document.body.appendChild(div);
 
 export const showTooltip = (id) => {
-    console.log("test")
+    console.log("showTooltip")
     console.log("id", id)
     updateState({
         selectedHighlightId: id,
@@ -17,7 +17,7 @@ export const showTooltip = (id) => {
 }
 
 export const hideTooltip = () => {
-    console.log("test")
+    console.log("hideTooltip")
     updateState({
         selectedHighlightId: null,
         showTooltip: false
@@ -38,9 +38,11 @@ try {
 }
 
 import hotkeys from "hotkeys-js";
-import highlight from "@pages/content/highlight/highlight";
+import highlight from "@pages/content/aggression/highlight";
 import {updateState} from "@pages/state/extensionState";
 import axios from "axios";
+import {throttle} from "throttle-debounce";
+import {isVisibleInViewport} from "@pages/content/utils";
 
 
 export const DEFAULT_COLOR_TITLE = "dark";
@@ -90,8 +92,44 @@ async function create(color, selection = window.getSelection(), text = window.ge
     highlight(text, container, selection, color.color, color.textColor);
 }
 
-const analyzePage = async () => {
-    console.log("analyzeText")
+document.addEventListener("scroll", throttle(100, () => {
+    analyzeAggession()
+}))
+
+const analyzedBlocks = []
+
+const analyzeAggression = async () => {
+    console.log("analyzePage")
+    const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const blocks = [];
+    let currentNode = treeWalker.nextNode();
+    while (currentNode) {
+        if (isVisibleInViewport(currentNode.parentElement)) {
+            const text = currentNode.textContent.trim().toLocaleLowerCase()
+            if (text.length > 0 && !text.includes("function") && !text.includes("self") && !analyzedBlocks.includes(text)) {
+                blocks.push(text);
+                analyzedBlocks.push(text)
+            }
+        }
+        currentNode = treeWalker.nextNode();
+    }
+
+    if (blocks.length > 0) {
+        const response = await axios.post('http://127.0.0.1:5001/analyze', {
+            blocks
+        })
+
+        if (response.data.length > 0) {
+            processText2(response.data)
+        }
+    }
+}
+
+const processText2 = (items) => {
+    console.log("processText2")
+
+    // Find all text nodes in the article. We'll search within
+    // these text nodes.
     const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     const allTextNodes = [];
     let currentNode = treeWalker.nextNode();
@@ -100,16 +138,49 @@ const analyzePage = async () => {
         currentNode = treeWalker.nextNode();
     }
 
-    const ranges = allTextNodes.map(el => el.textContent.trim()).filter(el => el.length > 0)
+    const res = []
 
-    console.log(ranges)
+    // Iterate over all text nodes and find matches.
+    allTextNodes
+        .map((el) => {
+            return { el, text: el.textContent.trim().toLocaleLowerCase() };
+        })
+        .forEach(({ text, el }) => {
+            items.forEach(item => {
+                if (text === item.block) {
+                    item.negative_words.map(word => {
+                        const indices = [];
 
-    const sum = ranges.reduce(
-        (accumulator, currentValue) => accumulator + currentValue.length,
-        0,
-    )
-    console.log(sum)
+                        let startPos = 0;
+                        while (startPos < text.length) {
+                            const index = text.indexOf(word, startPos);
+                            if (index === -1) break;
+                            indices.push(index);
+                            startPos = index + word.length;
+                        }
+
+                        // Create a range object for each instance of
+                        // str we found in the text node.
+                        indices.forEach((index) => {
+                            const range = new Range();
+                            range.setStart(el, index);
+                            range.setEnd(el, index + word.length);
+                            res.push(range)
+                        });
+                    })
+                }
+            })
+        });
+
+    console.log("res", res)
+
+    processRange(res)
 }
+
+const analyzePreconception = () => {
+
+}
+
 
 const processText = (root=document.body, str="форумов", start, end) => {
     console.log("processText")
@@ -198,12 +269,48 @@ hotkeys('g', async (e) => {
 
     const text = selection.toString()
 
-    // const response = await axios.post('http://127.0.0.1:8080/api/v1/analyze_text', {
-    //     "text": text
-    // })
-    //
-    // console.log(response.data)
-    //
+    const response = await axios.post('http://127.0.0.1:8080/api/v1/analyze_text', {
+        "text": text
+    })
+
+    console.log(response.data)
+
+    const start = selection.focusNode.textContent.indexOf(text);
+    const end = text.length + start;
+
+    const parent = selection.focusNode.parentElement as HTMLElement
+
+    response.data.response.map(item => {
+        if (item.state == 2 || item.state == 1) {
+            processText(parent, item.text, start, end)
+        }
+    })
+
+    processText(parent, text, start, end)
+});
+
+
+hotkeys('y', async (e) => {
+    e.preventDefault()
+
+    console.log("hotkey press")
+
+    const selection = window.getSelection();
+
+    if (!selection?.focusNode?.textContent) {
+        return
+    }
+
+    const text = selection.toString()
+
+    const response = await axios.post('http://127.0.0.1:8080/api/v1/replace', {
+        text: text,
+        preconception: true,
+        agitation: true
+    })
+
+    console.log(response.data)
+
     // const start = selection.focusNode.textContent.indexOf(text);
     // const end = text.length + start;
     //
@@ -214,30 +321,16 @@ hotkeys('g', async (e) => {
     //         processText(parent, item.text, start, end)
     //     }
     // })
-
-    const start = selection.focusNode.textContent.indexOf(text);
-    const end = text.length + start;
-
-    const parent = selection.focusNode.parentElement as HTMLElement
-
-    processText(parent, text, start, end)
+    //
+    // processText(parent, text, start, end)
 });
 
-hotkeys('h', () => {
-    analyzePage()
-})
 
 const initialize = () => {
     console.log("initialize")
-    // initializeHoverTools();
 
-    analyzePage()
-
-    // doReplacement()
-
-
-
-
+    analyzeAggression()
+    analyzePreconception()
 }
 
 
@@ -248,7 +341,9 @@ if(document.readyState !== 'complete') {
         }, 1500)
     });
 } else {
-    initialize();
+    setTimeout(() => {
+        initialize()
+    }, 500)
 }
 
 
