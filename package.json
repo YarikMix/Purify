@@ -18,7 +18,6 @@
   "type": "module",
   "dependencies": {
     "@types/mark.js": "^8.11.12",
-    "@types/sanitize-html": "^2.13.0",
     "@types/throttle-debounce": "^5.0.2",
     "axios": "^1.8.3",
     "hotkeys-js": "^3.13.9",
@@ -28,7 +27,6 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.4.0",
-    "sanitize-html": "^2.15.0",
     "throttle-debounce": "^5.0.2",
     "valtio": "^2.1.3",
     "webextension-polyfill": "^0.12.0"
