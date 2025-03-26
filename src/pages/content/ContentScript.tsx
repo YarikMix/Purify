@@ -1,6 +1,5 @@
 import useExtensionState from "@pages/hooks/useExtensionState";
 import {useEffect, useRef, useState} from "react";
-import {Mode} from "@pages/state/extensionState";
 import "./style.css"
 
 type HightlightPos = {
@@ -9,24 +8,23 @@ type HightlightPos = {
 }
 
 const ContentScript = () => {
-	const {mode, showTooltip, selectedHighlightId} = useExtensionState();
+	const { showTooltip, selectedHighlightId} = useExtensionState();
 
-	const tooltipRef = useRef<HTMLElement | null>(null)
-
-	console.log("ContentScript")
-	console.log("mode", mode)
+	const tooltipRef = useRef<HTMLDivElement | null>(null)
 
 	const [pos, setPos] = useState<HightlightPos>({
 		left: 0,
 		top: 0
 	})
 
-	const moveToolbarToHighlight = (selectedHighlightId) => {
-		console.log("moveToolbarToHighlight")
-		console.log("selectedHighlightId", selectedHighlightId)
+	const [text, setText] = useState("")
 
-		const highlightEl = document.querySelector(`highlighter-span[data-highlight-id='${selectedHighlightId}']`)
-		console.log("highlightEl", highlightEl)
+	const moveToolbarToHighlight = (selectedHighlightId:string) => {
+		const highlightEl = document.querySelector<HTMLElement>(`highlighter-span[data-highlight-id='${selectedHighlightId}']`)
+
+		if (!highlightEl || !tooltipRef.current) {
+			return
+		}
 
 		const boundingRect = highlightEl.getBoundingClientRect();
 		const toolWidth = 108; // When changing this, also update the width in css #highlighter--hover-tools--container
@@ -38,6 +36,8 @@ const ContentScript = () => {
 			top: boundingRect.top - tooltipHeight - tooltipOffset,
 			left: boundingRect.left + (boundingRect.width / 2) - (toolWidth / 2)
 		});
+
+		setText("Оригинал: " + highlightEl.dataset.original)
 	}
 
 	useEffect(() => {
@@ -45,9 +45,6 @@ const ContentScript = () => {
 			moveToolbarToHighlight(selectedHighlightId)
 		}
 	}, [showTooltip, selectedHighlightId]);
-
-	console.log("pos", pos)
-	console.log("showTooltip", showTooltip)
 
 	// useEffect(() => {
 	// 	if (mode == Mode.fullPage) {
@@ -69,19 +66,17 @@ const ContentScript = () => {
 	// 	}
 	// }, [mode]);
 
-	return (
-		<div>
-			AAASDFASDFASDFASDFASFDASDF1
-			<div>{mode === Mode.fullPage ? "Меняем текст на всей странице" : "Меняем текст по хоткею"}</div>
-			{showTooltip &&
-				<div className="tooltip" style={{top: pos.top, left: pos.left}} ref={tooltipRef}>
-					<span className="tooltiptext">
-						Показываем тултип
-					</span>
-				</div>
-			}
-		</div>
-	)
+	console.log("showTooltip", showTooltip)
+
+	if (showTooltip) {
+		return (
+			<div className="tooltip" style={{top: pos.top, left: pos.left}} ref={tooltipRef}>
+				<span className="tooltiptext">
+					{text}
+				</span>
+			</div>
+		)
+	}
 }
 
 export default ContentScript

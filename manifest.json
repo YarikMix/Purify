@@ -2,9 +2,6 @@
   "manifest_version": 3,
   "name": "Purify",
   "description": "Описание плагина",
-  "options_ui": {
-    "page": "src/pages/options/index.html"
-  },
   "action": {
     "default_popup": "src/pages/popup/index.html",
     "default_icon": {
@@ -40,7 +37,6 @@
     }
   ],
   "host_permissions": [ "*://*/*" ],
-  "devtools_page": "src/pages/devtools/index.html",
   "web_accessible_resources": [
     {
       "resources": [

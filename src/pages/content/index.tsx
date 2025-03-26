@@ -3,13 +3,25 @@ import ContentScript from "@pages/content/ContentScript";
 import {ReactNode} from "react";
 import './style.css'
 
+import {state, updateState} from "@pages/state/extensionState";
+import hotkeys from "hotkeys-js";
+import axios from "axios";
+import highlight from "@pages/content/neutralization/highlitght";
+import {replaceAggression} from "@pages/content/aggression/replacement";
+import {analyzeAggression} from "@pages/content/aggression/filter";
+
 const div = document.createElement('div');
 div.id = '__root';
 document.body.appendChild(div);
 
 export const showTooltip = (id) => {
-    console.log("test")
+    console.log("showTooltip")
     console.log("id", id)
+
+    if (!state.aggressionShowOriginalText) {
+        return
+    }
+
     updateState({
         selectedHighlightId: id,
         showTooltip: true
@@ -17,7 +29,12 @@ export const showTooltip = (id) => {
 }
 
 export const hideTooltip = () => {
-    console.log("test")
+    console.log("hideTooltip")
+
+    if (!state.aggressionShowOriginalText) {
+        return
+    }
+
     updateState({
         selectedHighlightId: null,
         showTooltip: false
@@ -37,77 +54,65 @@ try {
   console.error(e);
 }
 
-import hotkeys from "hotkeys-js";
-import highlight from "@pages/content/highlight/highlight/highlight";
-import {updateState} from "@pages/state/extensionState";
-import axios from "axios";
+function getCurrentColor() {
+    console.log("getCurrentColor123")
 
-
-export const DEFAULT_COLOR_TITLE = "dark";
-export const DEFAULT_COLORS = [
-    {
-        title: 'yellow',
-        color: 'rgb(255, 246, 21)',
-    },
-    {
-        title: 'green',
-        color: 'rgb(68, 255, 147)',
-    },
-    {
-        title: 'blue',
-        color: 'rgb(66, 229, 255)',
-    },
-    {
-        title: 'pink',
-        color: 'rgb(244, 151, 255)',
-    },
-    {
-        title: 'dark',
+    return {
         color: 'rgb(52, 73, 94)',
         textColor: 'rgb(255, 255, 255)',
-    },
-];
-
-
-function getCurrentColor() {
-    console.log("getCurrentColor")
-    const colorTitle = DEFAULT_COLOR_TITLE;
-    const colorOptions = DEFAULT_COLORS;
-    return colorOptions.find((colorOption) => colorOption.title === colorTitle) || colorOptions[0];
+    }
 }
 
-async function create(color, selection = window.getSelection(), text = window.getSelection().toString()) {
-    console.log("create")
-    const selectionString = selection.toString();
-    if (!selectionString) return;
+hotkeys('g', async (e) => {
+    e.preventDefault()
 
-    let container = selection.getRangeAt(0).commonAncestorContainer as HTMLElement;
+    console.log("hotkey press")
 
-    while (!container.innerHTML) {
-        container = container.parentNode as HTMLElement;
+    const selection = window.getSelection();
+
+    if (!selection?.focusNode?.textContent) {
+        return
     }
 
-    highlight(text, container, selection, color.color, color.textColor);
-}
+    const text = selection.toString()
 
-const analyzePage = async () => {
-    console.log("analyzeText")
-    const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    const allTextNodes = [];
-    let currentNode = treeWalker.nextNode();
-    while (currentNode) {
-        allTextNodes.push(currentNode);
-        currentNode = treeWalker.nextNode();
-    }
+    const response = await axios.post('http://127.0.0.1:8080/api/v1/replace', {
+        text: text,
+        preconception: true,
+        agitation: true
+    })
 
-    const ranges = allTextNodes.map(el => el.textContent.trim()).filter(el => el.length > 0)
+    console.log(response.data)
 
-    console.log(ranges)
-}
 
-const processText = (root=document.body, str="форумов", start, end) => {
+    // response.data.response.map(item => {
+    //     if (item.state == 2 || item.state == 1) {
+    //         processText(parent, item.text, start, end)
+    //     }
+    // })
+
+    const start = selection.focusNode.textContent.indexOf(text);
+    const end = text.length + start;
+
+    const parent = selection.focusNode.parentElement as HTMLElement
+
+    response.data.blocks.forEach(block => {
+        console.log("block", block)
+
+        block.result.forEach(item => {
+            console.log("item", item)
+
+            processText(parent, item.from, item.to, start, end)
+        })
+    })
+});
+
+
+const processText = (root=document.body, from, to, start, end) => {
     console.log("processText")
-    console.log("str", str)
+    console.log("from", from)
+    console.log("to", to)
+
     // Find all text nodes in the article. We'll search within
     // these text nodes.
     const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -124,16 +129,17 @@ const processText = (root=document.body, str="форумов", start, end) => {
             return { el, text: el.textContent };
         })
         .map(({ text, el }) => {
+            console.log("text", text)
             const indices = [];
             let startPos = 0;
             while (startPos < text.length) {
-                const index = text.indexOf(str, startPos);
+                const index = text.indexOf(from, startPos);
                 console.log("index", index)
                 if (index === -1) break;
                 if (index >= start && index <= end) {
                     indices.push(index);
                 }
-                startPos = index + str.length;
+                startPos = index + from.length;
             }
 
             // Create a range object for each instance of
@@ -141,19 +147,17 @@ const processText = (root=document.body, str="форумов", start, end) => {
             return indices.map((index) => {
                 const range = new Range();
                 range.setStart(el, index);
-                range.setEnd(el, index + str.length);
+                range.setEnd(el, index + from.length);
                 return range;
             });
         });
 
-    console.log("ranges", ranges)
-
-    processRange(ranges)
+    processRange(ranges, from, to)
 }
 
-const processRange = (range) => {
+const processRange = (range, from, to) => {
     if (Array.isArray(range)) {
-        range.forEach(r => processRange(r))
+        range.forEach(r => processRange(r, from, to))
         return
     }
 
@@ -176,49 +180,17 @@ const processRange = (range) => {
     selection.removeAllRanges();
     selection.addRange(r);
 
-    create(getCurrentColor(), selection);
+    const color = getCurrentColor()
+
+    console.log("create2")
+    const selectionString = selection.toString();
+    if (selectionString)
+        highlight(from, to, container, selection, color.color, color.textColor);
 }
 
-hotkeys('g', async (e) => {
-    e.preventDefault()
-
-    console.log("hotkey press")
-
-    const selection = window.getSelection();
-
-    if (!selection?.focusNode) {
-        return
-    }
-
-    const text = selection.toString()
-
-    const response = await axios.post('http://127.0.0.1:8080/api/v1/analyze_text', {
-        "text": text
-    })
-
-    console.log(response.data)
-
-    const start = selection.focusNode.textContent.indexOf(text);
-    const end = text.length + start;
-
-    const parent = selection.focusNode.parentElement as HTMLElement
-
-    response.data.response.map(item => {
-        if (item.state == 2 || item.state == 1) {
-            processText(parent, item.text, start, end)
-        }
-    })
-});
-
 const initialize = () => {
-    console.log("initialize")
-    // initializeHoverTools();
-
-    // analyzePage()
-
-    // doReplacement()
-
-
+    state.aggressionFilterEnabled && analyzeAggression()
+    state.aggressionReplacementEnabled && replaceAggression()
 }
 
 
@@ -229,7 +201,9 @@ if(document.readyState !== 'complete') {
         }, 1500)
     });
 } else {
-    initialize();
+    setTimeout(() => {
+        initialize()
+    }, 500)
 }
 
 

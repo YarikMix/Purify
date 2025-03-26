@@ -5,20 +5,27 @@ export enum Actions {
   SET_STATE = "set-state",
 }
 
-export enum Mode {
-  fullPage,
-  selective
-}
-
 export const state = proxy({
-  mode: Mode.selective,
+  enabled: true,
+
+  aggressionEnabled: true,
+  aggressionFilterEnabled: false,
+  aggressionReplacementEnabled: true,
+  aggressionShowOriginalText: true,
+
   showTooltip: false,
   selectedHighlightId: null
 });
 
 export type ExtensionState = {
-  mode: Mode,
-  showTooltip: boolean,
+  enabled: boolean
+
+  aggressionEnabled: boolean;
+  aggressionFilterEnabled: boolean;
+  aggressionReplacementEnabled: boolean;
+  aggressionShowOriginalText: boolean;
+
+  showTooltip: boolean
   selectedHighlightId: null | number
 };
 
