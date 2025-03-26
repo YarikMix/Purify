@@ -8,6 +8,7 @@ import {analyzeAggression} from "@pages/content/aggression";
 import hotkeys from "hotkeys-js";
 import axios from "axios";
 import highlight from "@pages/content/neutralization/highlitght";
+import {replaceAggression} from "@pages/content/aggression/replacement";
 
 const div = document.createElement('div');
 div.id = '__root';
@@ -79,10 +80,6 @@ function getCurrentColor() {
         color: 'rgb(66, 229, 255)',
         textColor: 'rgb(255, 255, 255)',
     }
-}
-
-const analyzePreconception = () => {
-
 }
 
 hotkeys('g', async (e) => {
@@ -212,7 +209,7 @@ const processRange = (range, from, to) => {
 
 const initialize = () => {
     state.aggressionFilterEnabled && analyzeAggression()
-    analyzePreconception()
+    state.aggressionReplacementEnabled && replaceAggression()
 }
 
 

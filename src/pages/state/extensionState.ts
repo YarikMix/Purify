@@ -13,9 +13,7 @@ export enum Mode {
 export const state = proxy({
   enabled: true,
   aggressionFilterEnabled: false,
-  preconceptionEnabled: true,
-  preconceptionMode: Mode.selective,
-  agitationEnabled: true,
+  aggressionReplacementEnabled: true,
 
   mode: Mode.selective,
   showTooltip: false,
