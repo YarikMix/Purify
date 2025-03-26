@@ -1,14 +1,41 @@
-
 import $ from "jquery";
 import {DELETED_CLASS, HIGHLIGHT_CLASS} from "@pages/content/highlight/constants";
-import {hideTooltip, showTooltip} from "@pages/content";
+import {Actions} from "@pages/state/extensionState";
+import filter from "@pages/content/aggression/filter";
+import replacement from "@pages/content/aggression/replacement/index";
 
-function initializeHighlightEventListeners(highlightElement) {
-	// highlightElement.addEventListener('mouseenter', onHighlightMouseEnterOrClick);
-	// highlightElement.addEventListener('click', onHighlightMouseEnterOrClick);
-	// highlightElement.addEventListener('mouseleave', onHighlightMouseLeave);
+const showTooltip = (highlightId:string) => {
+	const highlightEl = document.querySelector<HTMLElement>(`highlighter-span[data-highlight-id='${highlightId}']`)
 
-	highlightElement.addEventListener('mouseenter', () => showTooltip(highlightElement.dataset.highlightId));
+	if (!highlightEl) {
+		return
+	}
+
+	const tooltip = document.querySelector<HTMLElement>(".tooltip")
+
+	if (!tooltip) {
+		return;
+	}
+
+	tooltip.style.display = "block"
+
+	$(".tooltiptext").text(highlightEl.dataset.original as string)
+
+	const boundingRect = highlightEl.getBoundingClientRect();
+	const toolWidth = 108; // When changing this, also update the width in css #highlighter--hover-tools--container
+
+	const tooltipHeight = tooltip.getBoundingClientRect().height
+	const tooltipOffset = 5
+
+	tooltip.style.top = boundingRect.top - tooltipHeight - tooltipOffset + 'px'
+	tooltip.style.left = boundingRect.left + (boundingRect.width / 2) - (toolWidth / 2) +'px';
+}
+
+const hideTooltip = () => $(".tooltip").css("display", "none")
+
+const initializeHighlightEventListeners = (highlightElement:HTMLElement) => {
+	const highlightId = highlightElement.dataset.highlightId as string
+	highlightElement.addEventListener('mouseenter', () => showTooltip(highlightId));
 	highlightElement.addEventListener('mouseleave', hideTooltip);
 }
 
@@ -46,10 +73,15 @@ function highlight(from, to, container, selection, color, textColor) {
 	if (selection.removeAllRanges) selection.removeAllRanges();
 
 	// Step 4:
-	const parent = $(container).parent();
-	parent.find(`.${HIGHLIGHT_CLASS}`).each((_i, el) => {
-		initializeHighlightEventListeners(el);
+	chrome.runtime.sendMessage({ type: Actions.GET_STATE }, (state) => {
+		if (state.aggressionShowOriginalText) {
+			const parent = $(container).parent();
+			parent.find(`.${HIGHLIGHT_CLASS}`).each((_i, el) => {
+				initializeHighlightEventListeners(el);
+			});
+		}
 	});
+
 
 	return true; // No errors
 }

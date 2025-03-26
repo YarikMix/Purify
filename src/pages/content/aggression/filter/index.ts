@@ -1,23 +1,37 @@
 import {throttle} from "throttle-debounce";
 import {isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
-import highlight from "@pages/content/aggression/highlight";
-import {state} from "@pages/state/extensionState";
+import highlight from "@pages/content/aggression/filter/highlight";
+import $ from "jquery";
 
-document.addEventListener("scroll", throttle(100, () => {
-	if (state.aggressionFilterEnabled) {
+const init = () => {
+	console.log("filter.init")
+	const elemsWithScroll = $('body *').filter(function() {
+		return ($(this).scrollTop() != 0 || $(this).css('overflow') == 'scroll');
+	});
+
+	const throttled = throttle(100, () => {
 		analyzeAggression()
-	}
-}))
+	})
 
-const analyzedBlocks = []
+	elemsWithScroll.each(function() {
+		this.addEventListener("scroll", throttled)
+	})
+
+	document.addEventListener("scroll", throttled)
+
+	analyzeAggression()
+}
+
+const analyzedBlocks:string[] = []
 
 export const analyzeAggression = async () => {
+	console.log("analyzeAggression")
 	const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
 	const blocks = [];
 	let currentNode = treeWalker.nextNode();
 	while (currentNode) {
-		if (isVisibleInViewport(currentNode.parentElement)) {
+		if (currentNode && currentNode.textContent && currentNode.parentElement && isVisibleInViewport(currentNode.parentElement)) {
 			const text = currentNode.textContent.trim().toLocaleLowerCase()
 			if (text.length > 0 && !text.includes("function") && !text.includes("self") && !analyzedBlocks.includes(text)) {
 				blocks.push(text);
@@ -120,3 +134,5 @@ const processRange = (range) => {
 		console.log("ERROR")
 	}
 }
+
+export default {init}

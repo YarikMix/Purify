@@ -1,16 +1,7 @@
-import { HIGHLIGHT_CLASS } from '../highlight/constants';
-
+import { HIGHLIGHT_CLASS } from '../../highlight/constants';
 
 import $ from "jquery";
 
-// const initializeHighlightEventListeners = (highlightElement:HTMLElement) => {
-//     // highlightElement.addEventListener('mouseenter', onHighlightMouseEnterOrClick);
-//     // highlightElement.addEventListener('click', onHighlightMouseEnterOrClick);
-//     // highlightElement.addEventListener('mouseleave', onHighlightMouseLeave);
-//
-//     highlightElement.addEventListener('mouseenter', () => showTooltip(highlightElement.dataset.highlightId));
-//     highlightElement.addEventListener('mouseleave', hideTooltip);
-// }
 
 function blur(selection, container) {
     const highlightInfo = {
@@ -40,12 +31,6 @@ function blur(selection, container) {
 
     // Step 3:
     if (selection.removeAllRanges) selection.removeAllRanges();
-
-    // Step 4:
-    // const parent = $(container).parent();
-    // parent.find(`.${HIGHLIGHT_CLASS}`).each((_i, el) => {
-    //     initializeHighlightEventListeners(el);
-    // });
 
     return true; // No errors
 }

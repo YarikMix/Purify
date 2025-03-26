@@ -13,7 +13,7 @@ const ToggleAppEnabled = () => {
         setEnabled(enabled => !enabled)
     }
 
-    return <Toggle value={enabled} setValue={updateColor} color="red" bg="light"/>
+    return <Toggle value={enabled} setValue={updateColor} color="green" bg="light"/>
 }
 
 export default ToggleAppEnabled

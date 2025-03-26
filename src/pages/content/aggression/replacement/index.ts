@@ -1,14 +1,39 @@
 import {throttle} from "throttle-debounce";
 import {isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
-import {state} from "@pages/state/extensionState";
-import highlight from "@pages/content/neutralization/highlitght";
+import highlight from "@pages/content/aggression/replacement/highlitght";
+import $ from "jquery";
 
-document.addEventListener("scroll", throttle(100, () => {
-    if (state.aggressionReplacementEnabled) {
+const init = () => {
+    console.log("replacement.init")
+    const elemsWithScroll = $('body *').filter(function() {
+        return ($(this).scrollTop() != 0 || $(this).css('overflow') == 'scroll');
+    });
+
+    const throttled = throttle(100, () => {
+        console.log("scroll123")
         replaceAggression()
-    }
-}))
+    })
+
+    elemsWithScroll.each(function() {
+        this.addEventListener("scroll", throttled)
+    })
+
+    document.addEventListener("scroll", throttled)
+
+    replaceAggression()
+
+    const tooltip = document.createElement("div")
+
+    const span = document.createElement("span")
+    span.classList.add("tooltiptext")
+
+    tooltip.appendChild(span)
+
+    tooltip.classList.add("tooltip")
+
+    document.body.appendChild(tooltip)
+}
 
 function getCurrentColor() {
     console.log("getCurrentColor1234123")
@@ -138,3 +163,5 @@ const processRange = (data) => {
         console.log("ERROR")
     }
 }
+
+export default {init}
