@@ -59,9 +59,10 @@ const Aggression = () => {
                     <Toggle value={extensionState.aggressionEnabled} setValue={handleToggleAggressionEnabled} bg="dark" />
                 </div>
                 <div className="pl-4 flex flex-col gap-4">
-                    <Option label="Фильтровать" value={extensionState.aggressionFilterEnabled} onToggle={handleToggleAggressionFilterEnabled} disabled={!extensionState.aggressionEnabled}/>
-                    <Option label="Заменять" value={extensionState.aggressionReplacementEnabled} onToggle={handleToggleAggressionReplacementEnabled} disabled={!extensionState.aggressionEnabled}/>
+                    <Option label="Фильтровать текст" value={extensionState.aggressionFilterEnabled} onToggle={handleToggleAggressionFilterEnabled} disabled={!extensionState.aggressionEnabled}/>
+                    <Option label="Заменять текст" value={extensionState.aggressionReplacementEnabled} onToggle={handleToggleAggressionReplacementEnabled} disabled={!extensionState.aggressionEnabled}/>
                     <Option label="Отображать оригинальный текст" value={extensionState.aggressionShowOriginalText} onToggle={handleToggleAggressionShowOriginalText} disabled={!extensionState.aggressionEnabled || !extensionState.aggressionReplacementEnabled}/>
+                    <Option label="Фильтровать изображения" />
                 </div>
             </div>
         </div>
