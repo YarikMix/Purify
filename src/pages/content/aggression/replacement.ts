@@ -22,7 +22,7 @@ function getCurrentColor() {
 const analyzedBlocks = []
 
 export const replaceAggression = async () => {
-    console.log("replaceAggression1")
+    console.log("replaceAggression")
     const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     const blocks = [];
     let currentNode = treeWalker.nextNode();
