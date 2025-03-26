@@ -5,10 +5,10 @@ type Props = {
     setValue: React.Dispatch<React.SetStateAction<boolean>>
     color?: "blue" | "red"
     bg?: "light" | "dark"
-    disabled: boolean
+    disabled?: boolean
 }
 
-const Toggle = ({value, setValue, color="blue", bg="light", disabled}:Props) => {
+const Toggle = ({value, setValue, color="blue", bg="light", disabled=false}:Props) => {
     const toggleValue = () => {
         setValue(value => !value)
     }

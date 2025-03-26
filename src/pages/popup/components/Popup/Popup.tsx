@@ -7,7 +7,6 @@ import Simplify from "@pages/popup/pages/Simplify/Simplify";
 import {FaAngry} from "react-icons/fa";
 import ToggleAppEnabled from "@pages/popup/components/ToggleAppEnabled/ToggleAppEnabled";
 import NavItem from "@pages/popup/components/NavItem/NavItem";
-import SettingsButton from "@pages/popup/components/SettingsButton/SettingsButton";
 import {IoSettingsSharp} from "react-icons/io5";
 import {BsFeather} from "react-icons/bs";
 
@@ -15,10 +14,11 @@ export default function Popup() {
     return (
         <div className="absolute top-0 left-0 right-0 bottom-0 text-center h-full bg-sky-50">
             <header className="flex flex-col gap-4 p-3 bg-gray-800">
-                <div className="flex justify-between items-center px-4">
-                    <ToggleAppEnabled />
+                <div className="flex justify-center items-center px-4 relative">
+                    <div className="absolute left-0 top-0">
+                        <ToggleAppEnabled />
+                    </div>
                     <Logo/>
-                    <SettingsButton />
                 </div>
                 <div className="flex justify-between">
                     <NavItem path="/" label="Настройки" icon={<IoSettingsSharp fontSize={16} />} />
