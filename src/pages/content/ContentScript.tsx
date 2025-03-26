@@ -8,12 +8,9 @@ type HightlightPos = {
 }
 
 const ContentScript = () => {
-	const {mode, showTooltip, selectedHighlightId} = useExtensionState();
+	const { showTooltip, selectedHighlightId} = useExtensionState();
 
 	const tooltipRef = useRef<HTMLDivElement | null>(null)
-
-	console.log("ContentScript")
-	console.log("mode", mode)
 
 	const [pos, setPos] = useState<HightlightPos>({
 		left: 0,
@@ -23,11 +20,7 @@ const ContentScript = () => {
 	const [text, setText] = useState("")
 
 	const moveToolbarToHighlight = (selectedHighlightId:string) => {
-		console.log("moveToolbarToHighlight")
-		console.log("selectedHighlightId", selectedHighlightId)
-
-		const highlightEl = document.querySelector(`highlighter-span[data-highlight-id='${selectedHighlightId}']`)
-		console.log("highlightEl", highlightEl)
+		const highlightEl = document.querySelector<HTMLElement>(`highlighter-span[data-highlight-id='${selectedHighlightId}']`)
 
 		if (!highlightEl || !tooltipRef.current) {
 			return

@@ -5,9 +5,10 @@ type Props = {
     setValue: React.Dispatch<React.SetStateAction<boolean>>
     color?: "blue" | "red"
     bg?: "light" | "dark"
+    disabled: boolean
 }
 
-const Toggle = ({value, setValue, color="blue", bg="light"}:Props) => {
+const Toggle = ({value, setValue, color="blue", bg="light", disabled}:Props) => {
     const toggleValue = () => {
         setValue(value => !value)
     }
@@ -18,13 +19,18 @@ const Toggle = ({value, setValue, color="blue", bg="light"}:Props) => {
     };
 
     const backgroundColorVariants = {
-        light: "bg-gray-200 after:border-gray-300",
-        dark: "bg-gray-400 after:border-white",
+        light: "bg-gray-200 after:border-gray-300 dark:border-gray-300 dark:bg-gray-200",
+        dark: "bg-gray-400 after:border-white dark:border-white dark:bg-gray-400",
     };
 
+    const cursorVariants = {
+        enabled: "cursor-pointer",
+        disabled: "cursor-not-allowed"
+    }
+
     return (
-        <label className="inline-flex items-center cursor-pointer">
-            <input type="checkbox" className="sr-only peer" checked={value} onChange={toggleValue}/>
+        <label className={["inline-flex", "items-center", cursorVariants[disabled ? "disabled" : "enabled"]].join(" ")}>
+            <input type="checkbox" className="sr-only peer" checked={value} onChange={toggleValue} disabled={disabled}/>
             <div
                 className={[
                     colorVariants[color],

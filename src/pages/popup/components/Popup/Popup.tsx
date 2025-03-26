@@ -4,13 +4,12 @@ import {Route, Routes} from 'react-router-dom';
 import Home from "@pages/popup/pages/Home/Home";
 import Aggression from "@pages/popup/pages/Aggression/Aggression";
 import Simplify from "@pages/popup/pages/Simplify/Simplify";
-import Preconception from "@pages/popup/pages/Preconception/Preconception";
-import {PiWrenchFill} from "react-icons/pi";
 import {FaAngry} from "react-icons/fa";
-import {FaEye} from "react-icons/fa6";
 import ToggleAppEnabled from "@pages/popup/components/ToggleAppEnabled/ToggleAppEnabled";
 import NavItem from "@pages/popup/components/NavItem/NavItem";
 import SettingsButton from "@pages/popup/components/SettingsButton/SettingsButton";
+import {IoSettingsSharp} from "react-icons/io5";
+import {BsFeather} from "react-icons/bs";
 
 export default function Popup() {
     return (
@@ -22,9 +21,9 @@ export default function Popup() {
                     <SettingsButton />
                 </div>
                 <div className="flex justify-between">
-                    <NavItem path="/simplify" label="Упростить" icon={<PiWrenchFill fontSize={16} />} />
+                    <NavItem path="/" label="Настройки" icon={<IoSettingsSharp fontSize={16} />} />
                     <NavItem path="/aggression" label="Агрессия" icon={<FaAngry fontSize={16} />} />
-                    <NavItem path="/preconception" label="Предвзятость" icon={<FaEye fontSize={16} />} />
+                    <NavItem path="/simplify" label="Упрощение" icon={<BsFeather fontSize={16} />} />
                 </div>
             </header>
             <div className="text-slate-500 p-4">
@@ -32,7 +31,6 @@ export default function Popup() {
                     <Route path="/" element={<Home />} />
                     <Route path="/simplify" element={<Simplify />}/>
                     <Route path="/aggression" element={<Aggression />} />
-                    <Route path="/preconception" element={<Preconception />} />
                 </Routes>
             </div>
         </div>

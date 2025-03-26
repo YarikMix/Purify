@@ -4,11 +4,11 @@ import {ReactNode} from "react";
 import './style.css'
 
 import {state, updateState} from "@pages/state/extensionState";
-import {analyzeAggression} from "@pages/content/aggression";
 import hotkeys from "hotkeys-js";
 import axios from "axios";
 import highlight from "@pages/content/neutralization/highlitght";
 import {replaceAggression} from "@pages/content/aggression/replacement";
+import {analyzeAggression} from "@pages/content/aggression/filter";
 
 const div = document.createElement('div');
 div.id = '__root';
@@ -17,6 +17,11 @@ document.body.appendChild(div);
 export const showTooltip = (id) => {
     console.log("showTooltip")
     console.log("id", id)
+
+    if (!state.aggressionShowOriginalText) {
+        return
+    }
+
     updateState({
         selectedHighlightId: id,
         showTooltip: true
@@ -25,6 +30,11 @@ export const showTooltip = (id) => {
 
 export const hideTooltip = () => {
     console.log("hideTooltip")
+
+    if (!state.aggressionShowOriginalText) {
+        return
+    }
+
     updateState({
         selectedHighlightId: null,
         showTooltip: false
@@ -44,40 +54,11 @@ try {
   console.error(e);
 }
 
-
-
-export const DEFAULT_COLOR_TITLE = "dark";
-export const DEFAULT_COLORS = [
-    {
-        title: 'yellow',
-        color: 'rgb(255, 246, 21)',
-    },
-    {
-        title: 'green',
-        color: 'rgb(68, 255, 147)',
-    },
-    {
-        title: 'blue',
-        color: 'rgb(66, 229, 255)',
-    },
-    {
-        title: 'pink',
-        color: 'rgb(244, 151, 255)',
-    },
-    {
-        title: 'dark',
-        color: 'rgb(52, 73, 94)',
-        textColor: 'rgb(255, 255, 255)',
-    },
-];
-
-
 function getCurrentColor() {
-    console.log("getCurrentColor")
+    console.log("getCurrentColor123")
 
     return {
-        title: 'blue',
-        color: 'rgb(66, 229, 255)',
+        color: 'rgb(52, 73, 94)',
         textColor: 'rgb(255, 255, 255)',
     }
 }
@@ -201,7 +182,7 @@ const processRange = (range, from, to) => {
 
     const color = getCurrentColor()
 
-    console.log("create")
+    console.log("create2")
     const selectionString = selection.toString();
     if (selectionString)
         highlight(from, to, container, selection, color.color, color.textColor);
