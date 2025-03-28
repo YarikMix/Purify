@@ -1,8 +1,6 @@
 import $ from "jquery";
 import {DELETED_CLASS, HIGHLIGHT_CLASS} from "@pages/content/highlight/constants";
 import {Actions} from "@pages/state/extensionState";
-import filter from "@pages/content/aggression/filter";
-import replacement from "@pages/content/aggression/replacement/index";
 
 const showTooltip = (highlightId:string) => {
 	const highlightEl = document.querySelector<HTMLElement>(`highlighter-span[data-highlight-id='${highlightId}']`)
@@ -11,7 +9,7 @@ const showTooltip = (highlightId:string) => {
 		return
 	}
 
-	const tooltip = document.querySelector<HTMLElement>(".tooltip")
+	const tooltip = document.querySelector<HTMLElement>(".highlight__tooltip")
 
 	if (!tooltip) {
 		return;
@@ -19,7 +17,7 @@ const showTooltip = (highlightId:string) => {
 
 	tooltip.style.display = "block"
 
-	$(".tooltiptext").text(highlightEl.dataset.original as string)
+	$(".highlight__tooltip-text").text(highlightEl.dataset.original as string)
 
 	const boundingRect = highlightEl.getBoundingClientRect();
 	const toolWidth = 108; // When changing this, also update the width in css #highlighter--hover-tools--container
@@ -31,7 +29,7 @@ const showTooltip = (highlightId:string) => {
 	tooltip.style.left = boundingRect.left + (boundingRect.width / 2) - (toolWidth / 2) +'px';
 }
 
-const hideTooltip = () => $(".tooltip").css("display", "none")
+const hideTooltip = () => $(".highlight__tooltip").css("display", "none")
 
 const initializeHighlightEventListeners = (highlightElement:HTMLElement) => {
 	const highlightId = highlightElement.dataset.highlightId as string

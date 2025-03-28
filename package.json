@@ -17,6 +17,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@types/jquery": "^3.5.32",
     "@types/mark.js": "^8.11.12",
     "@types/throttle-debounce": "^5.0.2",
     "axios": "^1.8.3",

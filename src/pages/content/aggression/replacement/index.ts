@@ -26,11 +26,11 @@ const init = () => {
     const tooltip = document.createElement("div")
 
     const span = document.createElement("span")
-    span.classList.add("tooltiptext")
+    span.classList.add("highlight__tooltip-text")
 
     tooltip.appendChild(span)
 
-    tooltip.classList.add("tooltip")
+    tooltip.classList.add("highlight__tooltip")
 
     document.body.appendChild(tooltip)
 }

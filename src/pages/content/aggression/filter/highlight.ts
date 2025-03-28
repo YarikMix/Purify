@@ -3,7 +3,7 @@ import { HIGHLIGHT_CLASS } from '../../highlight/constants';
 import $ from "jquery";
 
 
-function blur(selection, container) {
+function blur(selection, container:HTMLElement) {
     const highlightInfo = {
         selectionString: selection.toString(),
         anchor: $(selection.anchorNode),
@@ -35,11 +35,12 @@ function blur(selection, container) {
     return true; // No errors
 }
 
-function recursiveWrapper(container, highlightInfo) {
+// TODO: Добавить @types/jquery
+function recursiveWrapper(container:JQuery, highlightInfo) {
     return _recursiveWrapper(container, highlightInfo, false, 0); // Initialize the values of 'startFound' and 'charsHighlighted'
 }
 
-function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighted) {
+function _recursiveWrapper(container:JQuery, highlightInfo, startFound, charsHighlighted) {
     console.log("_recursiveWrapper")
     const { anchor, focus, anchorOffset, focusOffset, selectionString } = highlightInfo;
     const selectionLength = selectionString.length;

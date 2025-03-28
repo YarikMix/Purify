@@ -12,7 +12,7 @@ import {BsFeather} from "react-icons/bs";
 
 export default function Popup() {
     return (
-        <div className="absolute top-0 left-0 right-0 bottom-0 text-center h-full bg-sky-50">
+        <div className="absolute top-0 left-0 right-0 bottom-0 text-center h-full bg-sky-50 flex flex-col min-h-screen">
             <header className="flex flex-col gap-4 p-3 bg-gray-800">
                 <div className="flex justify-center items-center px-4 relative">
                     <div className="absolute left-0 top-0">
@@ -26,7 +26,7 @@ export default function Popup() {
                     <NavItem path="/simplify" label="Упрощение" icon={<BsFeather fontSize={16} />} />
                 </div>
             </header>
-            <div className="text-slate-500 p-4">
+            <div className="text-slate-500 p-4 grow">
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/simplify" element={<Simplify />}/>
