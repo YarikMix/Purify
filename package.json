@@ -21,6 +21,7 @@
     "@types/mark.js": "^8.11.12",
     "@types/throttle-debounce": "^5.0.2",
     "axios": "^1.8.3",
+    "clsx": "^1.1.0",
     "hotkeys-js": "^3.13.9",
     "jquery": "^3.7.1",
     "mark.js": "^8.11.1",

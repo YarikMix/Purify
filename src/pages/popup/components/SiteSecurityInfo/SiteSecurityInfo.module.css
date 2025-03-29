@@ -1,0 +1,11 @@
+.container {
+	display: flex;
+	padding: 10px;
+	width: 100%;
+	background: #FFDEDE;
+	border-left: 1px solid #F64F5D;
+}
+
+.text {
+	color: #BA5E5E;
+}

@@ -3,6 +3,8 @@ import useExtensionState from "@pages/hooks/useExtensionState";
 import React from "react";
 import {updateState} from "@pages/state/extensionState";
 import Option from "@pages/popup/components/Option/Option";
+import SiteSecurityInfo from "@pages/popup/components/SiteSecurityInfo/SiteSecurityInfo";
+import SiteInfoBlock from "@pages/popup/components/SiteInfoBlock/SiteInfoBlock";
 
 const Aggression = () => {
     const extensionState = useExtensionState()
@@ -64,6 +66,11 @@ const Aggression = () => {
                     <Option label="Отображать оригинальный текст" value={extensionState.aggressionShowOriginalText} onToggle={handleToggleAggressionShowOriginalText} disabled={!extensionState.aggressionEnabled || !extensionState.aggressionReplacementEnabled}/>
                     <Option label="Фильтровать изображения" />
                 </div>
+            </div>
+            <SiteSecurityInfo />
+            <div className="flex gap-4 justify-around">
+                <SiteInfoBlock />
+                <SiteInfoBlock />
             </div>
         </div>
     )
