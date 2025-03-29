@@ -1,6 +1,7 @@
 import Toggle from "@pages/popup/components/Toggle/Toggle";
 import React from "react";
 import KeyboardTooltip from "@pages/popup/components/KeyboardTooltip/KeyboardTooltip";
+import InfoBlockSimplify from "@pages/popup/components/InfoBlockSimplify/InfoBlockSimplify";
 
 export const Simplify = () => {
     return (
@@ -23,6 +24,7 @@ export const Simplify = () => {
                     </div>
                 </div>
             </div>
+            <InfoBlockSimplify />
         </div>
     );
 };

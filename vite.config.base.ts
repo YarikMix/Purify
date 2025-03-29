@@ -8,6 +8,7 @@ import { stripDevIcons, crxI18n } from './custom-vite-plugins';
 import manifest from './manifest.json';
 import devManifest from './manifest.dev.json';
 import pkg from './package.json';
+import svgr from 'vite-plugin-svgr'
 
 
 const isDev = process.env.__DEV__ === 'true';
@@ -36,7 +37,11 @@ export default defineConfig({
     tsconfigPaths(),
     react(),
     stripDevIcons(isDev),
-    crxI18n({ localize, src: './src/locales' }),
+    svgr({
+      svgrOptions: {
+          // svgr options
+      },
+    }),
   ],
   publicDir: resolve(__dirname, 'public'),
 });

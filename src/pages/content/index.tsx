@@ -1,6 +1,6 @@
 import './style.css'
 
-import {Actions} from "@pages/state/extensionState";
+import {Actions, state} from "@pages/state/extensionState";
 import replacement from "@pages/content/aggression/replacement";
 import filter from "@pages/content/aggression/filter";
 import images from "@pages/content/aggression/images"

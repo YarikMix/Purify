@@ -19,25 +19,25 @@ const init = () => {
 
             console.log("img.src", img.src)
 
-            img.src = `${randomElement(MEMES)}`
-            img.style.objectFit = 'cover'
-            img.style.objectPosition = '50%'
-
-            if (img.getAttribute('srcset')) {
-                img.setAttribute('srcset', `${randomElement(MEMES)}`)
-            }
-
-            if (img.tagName === 'PICTURE') {
-                if (img.querySelector('source')) {
-                    const sources = img.querySelectorAll('source')
-
-                    for (const source of sources) {
-                        if (source.hasAttribute('srcset')) {
-                            source.setAttribute('srcset', `${randomElement(MEMES)}`)
-                        }
-                    }
-                }
-            }
+            // img.src = `${randomElement(MEMES)}`
+            // img.style.objectFit = 'cover'
+            // img.style.objectPosition = '50%'
+            //
+            // if (img.getAttribute('srcset')) {
+            //     img.setAttribute('srcset', `${randomElement(MEMES)}`)
+            // }
+            //
+            // if (img.tagName === 'PICTURE') {
+            //     if (img.querySelector('source')) {
+            //         const sources = img.querySelectorAll('source')
+            //
+            //         for (const source of sources) {
+            //             if (source.hasAttribute('srcset')) {
+            //                 source.setAttribute('srcset', `${randomElement(MEMES)}`)
+            //             }
+            //         }
+            //     }
+            // }
 
             // if (
             //     img.querySelector('img') &&
@@ -48,9 +48,9 @@ const init = () => {
             //         .setAttribute('srcset', `${randomElement(MEMES)}`)
             // }
 
-            if (img.style.backgroundImage) {
-                img.style.backgroundImage = `url(${randomElement(MEMES)})`
-            }
+            // if (img.style.backgroundImage) {
+            //     img.style.backgroundImage = `url(${randomElement(MEMES)})`
+            // }
         }
     }, 100)
 }

@@ -4,7 +4,8 @@ import React from "react";
 import {updateState} from "@pages/state/extensionState";
 import Option from "@pages/popup/components/Option/Option";
 import SiteSecurityInfo from "@pages/popup/components/SiteSecurityInfo/SiteSecurityInfo";
-import SiteInfoBlock from "@pages/popup/components/SiteInfoBlock/SiteInfoBlock";
+import InfoBlockAggressive from "@pages/popup/components/InfoBlockAggressive/InfoBlockAggressive";
+import InfoBlockObscene from "@pages/popup/components/InfoBlockObscene/InfoBlockObscene";
 
 const Aggression = () => {
     const extensionState = useExtensionState()
@@ -67,10 +68,12 @@ const Aggression = () => {
                     <Option label="Фильтровать изображения" />
                 </div>
             </div>
-            <SiteSecurityInfo />
-            <div className="flex gap-4 justify-around">
-                <SiteInfoBlock />
-                <SiteInfoBlock />
+            <div className="flex flex-col gap-4">
+                <SiteSecurityInfo aggressive={true}/>
+                <div className="flex gap-4 justify-around">
+                    <InfoBlockAggressive />
+                    <InfoBlockObscene />
+                </div>
             </div>
         </div>
     )
