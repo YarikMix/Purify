@@ -18,7 +18,7 @@ const initialize = () => {
     chrome.runtime.sendMessage({ type: Actions.GET_STATE }, (state) => {
         console.log("state", state)
         state.aggressionFilterEnabled && filter.init()
-        state.aggressionReplacementEnabled && replacement.init()
+        // state.aggressionReplacementEnabled && replacement.init()
         images.init()
     });
 }

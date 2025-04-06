@@ -19,7 +19,7 @@ const Aggression = () => {
     const handleToggleAggressionEnabled = () => {
         updateState({
             aggressionEnabled: !extensionState.aggressionEnabled,
-            aggressionFilterEnabled: false,
+            aggressionFilterEnabled: !extensionState.aggressionEnabled,
             aggressionReplacementEnabled: false,
             aggressionShowOriginalText: false
         })
@@ -64,8 +64,13 @@ const Aggression = () => {
                 <div className="pl-4 flex flex-col gap-4">
                     <Option label="Фильтровать текст" value={extensionState.aggressionFilterEnabled} onToggle={handleToggleAggressionFilterEnabled} disabled={!extensionState.aggressionEnabled}/>
                     <Option label="Заменять текст" value={extensionState.aggressionReplacementEnabled} onToggle={handleToggleAggressionReplacementEnabled} disabled={!extensionState.aggressionEnabled}/>
-                    <Option label="Отображать оригинальный текст" value={extensionState.aggressionShowOriginalText} onToggle={handleToggleAggressionShowOriginalText} disabled={!extensionState.aggressionEnabled || !extensionState.aggressionReplacementEnabled}/>
-                    <Option label="Фильтровать изображения" />
+                    <Option label="Отображать оригинальный текст"
+                            value={extensionState.aggressionShowOriginalText}
+                            onToggle={handleToggleAggressionShowOriginalText}
+                            disabled={!extensionState.aggressionEnabled || !extensionState.aggressionReplacementEnabled}
+                            sub={true}
+                    />
+                    {/*<Option label="Фильтровать изображения" />*/}
                 </div>
             </div>
             <div className="flex flex-col gap-4">
