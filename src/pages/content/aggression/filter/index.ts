@@ -1,26 +1,35 @@
 import {throttle} from "throttle-debounce";
-import {isVisibleInViewport} from "@pages/content/utils";
+import {getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/filter/highlight";
-import $ from "jquery";
 
-const init = () => {
-	console.log("filter.init")
-	const elemsWithScroll = $('body *').filter(function() {
-		return ($(this).scrollTop() != 0 || $(this).css('overflow') == 'scroll');
-	});
-
-	const throttled = throttle(100, () => {
-		analyzeAggression()
-	})
-
-	elemsWithScroll.each(function() {
-		this.addEventListener("scroll", throttled)
-	})
-
-	document.addEventListener("scroll", throttled)
-
+const throttled = throttle(100, () => {
 	analyzeAggression()
+})
+
+export const toggleFilterText = (enabled:boolean) => {
+	console.log("toggleFilterText")
+	console.log("enabled", enabled)
+
+	if (enabled) {
+		const elemsWithScroll = getScrolledElems()
+
+		elemsWithScroll.each(function() {
+			this.addEventListener("scroll", throttled)
+		})
+
+		document.addEventListener("scroll", throttled)
+
+		analyzeAggression()
+	} else {
+		const elemsWithScroll = getScrolledElems()
+
+		elemsWithScroll.each(function() {
+			this.removeEventListener("scroll", throttled)
+		})
+
+		document.removeEventListener("scroll", throttled)
+	}
 }
 
 const analyzedBlocks:string[] = []
@@ -134,5 +143,3 @@ const processRange = (range) => {
 		console.log("ERROR")
 	}
 }
-
-export default {init}

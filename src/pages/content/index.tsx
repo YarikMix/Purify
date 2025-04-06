@@ -1,9 +1,10 @@
 import './style.css'
 
-import {Actions, state} from "@pages/state/extensionState";
-import replacement from "@pages/content/aggression/replacement";
-import filter from "@pages/content/aggression/filter";
-import images from "@pages/content/aggression/images"
+import {toggleFilterText} from "@pages/content/aggression/filter";
+import {toggleReplacementText} from "@pages/content/aggression/replacement";
+import {toggleFilterImages} from "@pages/content/aggression/images";
+
+import {T_AppState} from "@src/types";
 
 
 try {
@@ -14,12 +15,19 @@ try {
 
 
 const initialize = () => {
-    console.log("initialize2")
-    chrome.runtime.sendMessage({ type: Actions.GET_STATE }, (state) => {
-        console.log("state", state)
-        state.aggressionFilterEnabled && filter.init()
-        // state.aggressionReplacementEnabled && replacement.init()
-        images.init()
+    console.log("aggression initialized")
+    chrome.storage.sync.get<T_AppState>(["aggressionEnabled", "aggressionFilterText", "aggressionFilterImages", "aggressionReplacementText", "aggressionShowOriginalText"], (state) => {
+        if (state.aggressionEnabled) {
+            state.aggressionFilterText && toggleFilterText(state.aggressionFilterText)
+            state.aggressionReplacementText && toggleReplacementText(state.aggressionReplacementText)
+            state.aggressionFilterImages && toggleFilterImages(state.aggressionFilterImages)
+        }
+    });
+
+    chrome.storage.onChanged.addListener((state) => {
+        if ("aggressionFilterText" in state) {
+            toggleFilterText(state.aggressionFilterText.newValue)
+        }
     });
 }
 

@@ -1,6 +1,5 @@
 import $ from "jquery";
 import {DELETED_CLASS, HIGHLIGHT_CLASS} from "@pages/content/highlight/constants";
-import {Actions} from "@pages/state/extensionState";
 
 const showTooltip = (highlightId:string) => {
 	const highlightEl = document.querySelector<HTMLElement>(`highlighter-span[data-highlight-id='${highlightId}']`)
@@ -71,14 +70,15 @@ function highlight(from, to, container, selection, color, textColor) {
 	if (selection.removeAllRanges) selection.removeAllRanges();
 
 	// Step 4:
-	chrome.runtime.sendMessage({ type: Actions.GET_STATE }, (state) => {
-		if (state.aggressionShowOriginalText) {
-			const parent = $(container).parent();
-			parent.find(`.${HIGHLIGHT_CLASS}`).each((_i, el) => {
-				initializeHighlightEventListeners(el);
-			});
-		}
-	});
+	// TODO
+	// chrome.runtime.sendMessage({ type: Actions.GET_STATE }, (state) => {
+	// 	if (state.aggressionShowOriginalText) {
+	// 		const parent = $(container).parent();
+	// 		parent.find(`.${HIGHLIGHT_CLASS}`).each((_i, el) => {
+	// 			initializeHighlightEventListeners(el);
+	// 		});
+	// 	}
+	// });
 
 
 	return true; // No errors

@@ -1,38 +1,47 @@
 import {throttle} from "throttle-debounce";
-import {isVisibleInViewport} from "@pages/content/utils";
+import {getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/replacement/highlitght";
-import $ from "jquery";
 
-const init = () => {
-    console.log("replacement.init")
-    const elemsWithScroll = $('body *').filter(function() {
-        return ($(this).scrollTop() != 0 || $(this).css('overflow') == 'scroll');
-    });
-
-    const throttled = throttle(100, () => {
-        console.log("scroll123")
-        replaceAggression()
-    })
-
-    elemsWithScroll.each(function() {
-        this.addEventListener("scroll", throttled)
-    })
-
-    document.addEventListener("scroll", throttled)
-
+const throttled = throttle(100, () => {
     replaceAggression()
+})
 
-    const tooltip = document.createElement("div")
+export const toggleReplacementText = (enabled:boolean) => {
+    console.log("toggleReplacementText")
+    console.log("enabled", enabled)
 
-    const span = document.createElement("span")
-    span.classList.add("highlight__tooltip-text")
+    if (enabled) {
+        console.log("replacement.init")
+        const elemsWithScroll = getScrolledElems()
 
-    tooltip.appendChild(span)
+        elemsWithScroll.each(function() {
+            this.addEventListener("scroll", throttled)
+        })
 
-    tooltip.classList.add("highlight__tooltip")
+        document.addEventListener("scroll", throttled)
 
-    document.body.appendChild(tooltip)
+        replaceAggression()
+
+        const tooltip = document.createElement("div")
+
+        const span = document.createElement("span")
+        span.classList.add("highlight__tooltip-text")
+
+        tooltip.appendChild(span)
+
+        tooltip.classList.add("highlight__tooltip")
+
+        document.body.appendChild(tooltip)
+    } else {
+        const elemsWithScroll = getScrolledElems()
+
+        elemsWithScroll.each(function() {
+            this.removeEventListener("scroll", throttled)
+        })
+
+        document.removeEventListener("scroll", throttled)
+    }
 }
 
 function getCurrentColor() {
@@ -163,5 +172,3 @@ const processRange = (data) => {
         console.log("ERROR")
     }
 }
-
-export default {init}

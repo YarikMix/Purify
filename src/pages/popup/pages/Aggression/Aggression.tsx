@@ -1,57 +1,99 @@
 import Toggle from "@pages/popup/components/Toggle/Toggle";
-import useExtensionState from "@pages/hooks/useExtensionState";
-import React from "react";
-import {updateState} from "@pages/state/extensionState";
+import React, {useEffect, useState} from "react";
 import Option from "@pages/popup/components/Option/Option";
 import SiteSecurityInfo from "@pages/popup/components/SiteSecurityInfo/SiteSecurityInfo";
 import InfoBlockAggressive from "@pages/popup/components/InfoBlockAggressive/InfoBlockAggressive";
 import InfoBlockObscene from "@pages/popup/components/InfoBlockObscene/InfoBlockObscene";
+import {T_AggressionState} from "@src/types";
 
 const Aggression = () => {
-    const extensionState = useExtensionState()
 
-    // const [localAggressionFilterEnabled, setLocalAggressionFilterEnabled] = useState(extensionState.aggressionFilterEnabled)
-    //
-    // useEffect(() => {
-    //     setLocalAggressionFilterEnabled(extensionState.aggressionFilterEnabled)
-    // }, [extensionState])
+    const [state, setState] = useState<T_AggressionState>(null)
+
+    useEffect(() => {
+        chrome.storage.sync.get<T_AggressionState>(["aggressionEnabled", "aggressionFilterText", "aggressionFilterImages", "aggressionReplacementText", "aggressionShowOriginalText"], (state) => {
+            setState(state)
+        });
+    }, []);
 
     const handleToggleAggressionEnabled = () => {
-        updateState({
-            aggressionEnabled: !extensionState.aggressionEnabled,
-            aggressionFilterEnabled: !extensionState.aggressionEnabled,
-            aggressionReplacementEnabled: false,
+        chrome.storage.sync.set({
+            "aggressionEnabled": !state.aggressionEnabled,
+            "aggressionFilterText": !state.aggressionEnabled,
+            "aggressionReplacementText": false,
+            "aggressionShowOriginalText": false
+        });
+
+        setState({
+            aggressionEnabled: !state.aggressionEnabled,
+            aggressionFilterText: !state.aggressionEnabled,
+            aggressionReplacementText: false,
+            aggressionShowOriginalText: false,
+            aggressionFilterImages: false,
+        })
+    }
+
+    const handleToggleFilterText = () => {
+        chrome.storage.sync.set({
+            "aggressionFilterText": !state.aggressionFilterText,
+            "aggressionReplacementText": false,
+            "aggressionShowOriginalText": false
+        });
+
+        setState({
+            ...state,
+            aggressionFilterText: !state.aggressionFilterText,
+            aggressionReplacementText: false,
             aggressionShowOriginalText: false
         })
     }
 
-    const handleToggleAggressionFilterEnabled = () => {
-        updateState({
-            aggressionFilterEnabled: !extensionState.aggressionFilterEnabled,
-            aggressionReplacementEnabled: false,
-            aggressionShowOriginalText: false
-        })
-    }
+    const handleToggleReplacementText = () => {
 
-    const handleToggleAggressionReplacementEnabled = () => {
+        let aggressionShowOriginalTextNewValue = state.aggressionShowOriginalText
 
-        let aggressionShowOriginalTextNewValue = extensionState.aggressionShowOriginalText
-
-        if (extensionState.aggressionReplacementEnabled) {
+        if (state.aggressionReplacementText) {
             aggressionShowOriginalTextNewValue = false
         }
 
-        updateState({
-            aggressionFilterEnabled: false,
-            aggressionReplacementEnabled: !extensionState.aggressionReplacementEnabled,
+        chrome.storage.sync.set({
+            "aggressionFilterText": false,
+            "aggressionReplacementText": !state.aggressionReplacementText,
+            "aggressionShowOriginalText": aggressionShowOriginalTextNewValue
+        });
+
+        setState({
+            ...state,
+            aggressionFilterText: false,
+            aggressionReplacementText: !state.aggressionReplacementText,
             aggressionShowOriginalText: aggressionShowOriginalTextNewValue
         })
     }
 
-    const handleToggleAggressionShowOriginalText = () => {
-        updateState({
-            aggressionShowOriginalText: !extensionState.aggressionShowOriginalText
+    const handleToggleShowOriginalText = () => {
+        chrome.storage.sync.set({
+            "aggressionShowOriginalText": !state.aggressionShowOriginalText
+        });
+
+        setState({
+            ...state,
+            aggressionShowOriginalText: !state.aggressionShowOriginalText
         })
+    }
+
+    const handleToggleFilterImages = () => {
+        chrome.storage.sync.set({
+            "aggressionFilterImages": !state.aggressionFilterImages
+        });
+
+        setState({
+            ...state,
+            aggressionFilterImages: !state.aggressionFilterImages
+        })
+    }
+
+    if (!state) {
+        return
     }
 
     return (
@@ -59,18 +101,18 @@ const Aggression = () => {
             <div>
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-stone-900 text-base font-black">Анализ агрессии</h1>
-                    <Toggle value={extensionState.aggressionEnabled} setValue={handleToggleAggressionEnabled} bg="dark" />
+                    <Toggle value={state.aggressionEnabled} setValue={handleToggleAggressionEnabled} bg="dark" />
                 </div>
                 <div className="pl-4 flex flex-col gap-4">
-                    <Option label="Фильтровать текст" value={extensionState.aggressionFilterEnabled} onToggle={handleToggleAggressionFilterEnabled} disabled={!extensionState.aggressionEnabled}/>
-                    <Option label="Заменять текст" value={extensionState.aggressionReplacementEnabled} onToggle={handleToggleAggressionReplacementEnabled} disabled={!extensionState.aggressionEnabled}/>
+                    <Option label="Фильтровать текст" value={state.aggressionFilterText} onToggle={handleToggleFilterText} disabled={!state.aggressionEnabled}/>
+                    <Option label="Заменять текст" value={state.aggressionReplacementText} onToggle={handleToggleReplacementText} disabled={!state.aggressionEnabled}/>
                     <Option label="Отображать оригинальный текст"
-                            value={extensionState.aggressionShowOriginalText}
-                            onToggle={handleToggleAggressionShowOriginalText}
-                            disabled={!extensionState.aggressionEnabled || !extensionState.aggressionReplacementEnabled}
+                            value={state.aggressionShowOriginalText}
+                            onToggle={handleToggleShowOriginalText}
+                            disabled={!state.aggressionEnabled || !state.aggressionReplacementText}
                             sub={true}
                     />
-                    {/*<Option label="Фильтровать изображения" />*/}
+                    <Option label="Фильтровать изображения" value={state.aggressionFilterImages} onToggle={handleToggleFilterImages} disabled={!state.aggressionEnabled} />
                 </div>
             </div>
             <div className="flex flex-col gap-4">

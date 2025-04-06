@@ -1,3 +1,5 @@
+import $ from "jquery"
+
 export const isVisibleInViewport = (element) => {
 	const elementStyle = window.getComputedStyle(element);
 	//Particular cases when the element is not visible at all
@@ -50,3 +52,9 @@ export const isVisibleInViewport = (element) => {
 export const randomElement = <T>(arr:T[]):T => {
 	return arr[Math.floor(Math.random() * arr.length)]
 }
+
+export const getScrolledElems = () => $('body *').filter(function() {
+	return ($(this).scrollTop() != 0 || $(this).css('overflow') == 'scroll');
+});
+
+export const getImages = () => document.querySelectorAll<HTMLImageElement>('a, img, picture, div, figure')
