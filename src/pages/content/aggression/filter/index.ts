@@ -11,8 +11,8 @@ export const toggleFilterText = (enabled:boolean) => {
 	console.log("toggleFilterText")
 	console.log("enabled", enabled)
 
+	const elemsWithScroll = getScrolledElems()
 	if (enabled) {
-		const elemsWithScroll = getScrolledElems()
 
 		elemsWithScroll.each(function() {
 			this.addEventListener("scroll", throttled)
@@ -21,8 +21,8 @@ export const toggleFilterText = (enabled:boolean) => {
 		document.addEventListener("scroll", throttled)
 
 		analyzeAggression()
+
 	} else {
-		const elemsWithScroll = getScrolledElems()
 
 		elemsWithScroll.each(function() {
 			this.removeEventListener("scroll", throttled)

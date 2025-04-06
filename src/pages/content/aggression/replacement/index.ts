@@ -11,9 +11,10 @@ export const toggleReplacementText = (enabled:boolean) => {
     console.log("toggleReplacementText")
     console.log("enabled", enabled)
 
+    const elemsWithScroll = getScrolledElems()
+
     if (enabled) {
         console.log("replacement.init")
-        const elemsWithScroll = getScrolledElems()
 
         elemsWithScroll.each(function() {
             this.addEventListener("scroll", throttled)
@@ -34,7 +35,6 @@ export const toggleReplacementText = (enabled:boolean) => {
 
         document.body.appendChild(tooltip)
     } else {
-        const elemsWithScroll = getScrolledElems()
 
         elemsWithScroll.each(function() {
             this.removeEventListener("scroll", throttled)

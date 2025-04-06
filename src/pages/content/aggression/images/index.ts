@@ -1,66 +1,65 @@
-import {getImages, isVisibleInViewport} from "@pages/content/utils";
+import {getImages, getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
+import {throttle} from "throttle-debounce";
+
+const analyzedImages:string[] = []
+
+const throttled = throttle(100, () => {
+    analyzeImages()
+})
+
 
 export const toggleFilterImages = (enabled:boolean) => {
+    console.log("toggleFilterImages")
+    console.log("enabled", enabled)
+
+    const elemsWithScroll = getScrolledElems()
+
     if (enabled) {
-        const images = getImages()
+        elemsWithScroll.each(function() {
+            this.addEventListener("scroll", throttled)
+        })
 
-        setTimeout(() => {
+        document.addEventListener("scroll", throttled)
 
-            for (let img of images) {
+        analyzeImages()
 
-                if (img.src != undefined) {
-                    console.log("isVisibleInViewport", isVisibleInViewport(img))
-                    if (isVisibleInViewport(img)) {
-                        console.log("img.src", img.src)
-                        analyzeImage(img.src)
-                    }
-                }
+    } else {
+        elemsWithScroll.each(function() {
+            this.removeEventListener("scroll", throttled)
+        })
 
-                // img.src = `${randomElement(MEMES)}`
-                // img.style.objectFit = 'cover'
-                // img.style.objectPosition = '50%'
-                //
-                // if (img.getAttribute('srcset')) {
-                //     img.setAttribute('srcset', `${randomElement(MEMES)}`)
-                // }
-                //
-                // if (img.tagName === 'PICTURE') {
-                //     if (img.querySelector('source')) {
-                //         const sources = img.querySelectorAll('source')
-                //
-                //         for (const source of sources) {
-                //             if (source.hasAttribute('srcset')) {
-                //                 source.setAttribute('srcset', `${randomElement(MEMES)}`)
-                //             }
-                //         }
-                //     }
-                // }
-
-                // if (
-                //     img.querySelector('img') &&
-                //     img.querySelector('img').getAttribute('srcset')
-                // ) {
-                //     img
-                //         .querySelector('img')
-                //         .setAttribute('srcset', `${randomElement(MEMES)}`)
-                // }
-
-                // if (img.style.backgroundImage) {
-                //     img.style.backgroundImage = `url(${randomElement(MEMES)})`
-                // }
-            }
-        }, 100)
+        document.removeEventListener("scroll", throttled)
     }
-
 }
 
-const analyzeImage = async (url) => {
+const analyzeImages = () => {
+    console.log("analyzeImages")
+    const images = getImages()
+
+    for (let img of images) {
+        if (img.src != undefined) {
+            console.log("isVisibleInViewport", isVisibleInViewport(img))
+            if (isVisibleInViewport(img) && !analyzedImages.includes(img.src)) {
+                analyzedImages.push(img.src)
+                analyzeImage(img)
+            }
+        }
+    }
+}
+
+const analyzeImage = async (img:HTMLImageElement) => {
     console.log("analyzeImage")
+    console.log("src", img.src)
 
     const response = await axios.post('http://127.0.0.1:8080/api/v1/process_image/', {
-        image: url
+        image: img.src
     })
 
-    console.log(response.data)
+    const url = response.data.image
+    if (url) {
+        console.log("replace img")
+        img.src = "http://127.0.0.1:9000" + url
+        console.log("new urc", img.src)
+    }
 }
