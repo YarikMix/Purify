@@ -2,7 +2,7 @@ import {getImages, getScrolledElems, isVisibleInViewport} from "@pages/content/u
 import axios from "axios";
 import {throttle} from "throttle-debounce";
 
-const analyzedImages:string[] = []
+const analyzedImages:Record<string, string> = {}
 
 const throttled = throttle(100, () => {
     analyzeImages()
@@ -39,9 +39,13 @@ const analyzeImages = () => {
     for (let img of images) {
         if (img.src != undefined) {
             console.log("isVisibleInViewport", isVisibleInViewport(img))
-            if (isVisibleInViewport(img) && !analyzedImages.includes(img.src)) {
-                analyzedImages.push(img.src)
-                analyzeImage(img)
+
+            if (isVisibleInViewport(img)) {
+                if (img.src in analyzedImages) {
+                    replaceImageSrc(img, analyzedImages[img.src])
+                } else {
+                    analyzeImage(img)
+                }
             }
         }
     }
@@ -51,16 +55,23 @@ const analyzeImage = async (img:HTMLImageElement) => {
     console.log("analyzeImage")
     console.log("src", img.src)
 
-    const response = await axios.post('http://127.0.0.1:8080/api/v1/process_image/', {
-        image: img.src
-    })
+    try {
+        const response = await axios.post('http://127.0.0.1:8080/api/v1/process_image/', {
+            image: img.src
+        })
 
-    const url = response.data.image
-    if (url) {
-        console.log("replace img")
-        // TODO: Вынести в .env
-        const newSrc = "http://127.0.0.1:9000" + url
-        img.src = newSrc
-        console.log("new src", newSrc)
+        const url = response.data.image
+        if (url) {
+            console.log("replace img")
+            replaceImageSrc(img, url)
+        }
+    } catch {
+        console.log("failed to analyze image: " + img.src)
     }
+}
+
+const replaceImageSrc = (img:HTMLImageElement, url:string) => {
+    const newSrc = "http://127.0.0.1:9000" + url
+    img.src = newSrc
+    console.log("new src", newSrc)
 }
