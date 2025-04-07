@@ -3,7 +3,7 @@ import React from "react";
 type Props = {
     value: boolean
     setValue: React.Dispatch<React.SetStateAction<boolean>>
-    color?: "blue" | "red"
+    color?: "blue" | "green"
     bg?: "light" | "dark"
     disabled?: boolean
 }
@@ -15,7 +15,7 @@ const Toggle = ({value, setValue, color="blue", bg="light", disabled=false}:Prop
 
     const colorVariants = {
         blue: "peer-checked:bg-blue-600 dark:bg-blue-500",
-        red: "peer-checked:bg-red-600 dark:bg-red-500",
+        green: "peer-checked:bg-green-500 dark:bg-green-500",
     };
 
     const backgroundColorVariants = {

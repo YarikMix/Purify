@@ -1,0 +1,30 @@
+.container {
+	display: flex;
+	padding: 10px;
+	width: 100%;
+	background: #FFDEDE;
+	border-left: 1px solid;
+}
+
+.text {
+	color: #BA5E5E;
+	font-size: 14px;
+}
+
+.bgRed {
+	background: #FFDEDE;
+	border-color: #F64F5D;
+}
+
+.bgGreen {
+	background: #C6F2CE;
+	border-color: #0AC02B;
+}
+
+.textRed {
+	color: #BA5E5E;
+}
+
+.textGreen {
+	color: #359E2F;
+}

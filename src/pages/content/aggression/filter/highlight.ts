@@ -1,18 +1,9 @@
-import { HIGHLIGHT_CLASS } from '../highlight/constants';
-
+import { HIGHLIGHT_CLASS } from '../../highlight/constants';
 
 import $ from "jquery";
 
-// const initializeHighlightEventListeners = (highlightElement:HTMLElement) => {
-//     // highlightElement.addEventListener('mouseenter', onHighlightMouseEnterOrClick);
-//     // highlightElement.addEventListener('click', onHighlightMouseEnterOrClick);
-//     // highlightElement.addEventListener('mouseleave', onHighlightMouseLeave);
-//
-//     highlightElement.addEventListener('mouseenter', () => showTooltip(highlightElement.dataset.highlightId));
-//     highlightElement.addEventListener('mouseleave', hideTooltip);
-// }
 
-function blur(selection, container) {
+function blur(selection, container:HTMLElement) {
     const highlightInfo = {
         selectionString: selection.toString(),
         anchor: $(selection.anchorNode),
@@ -41,20 +32,15 @@ function blur(selection, container) {
     // Step 3:
     if (selection.removeAllRanges) selection.removeAllRanges();
 
-    // Step 4:
-    // const parent = $(container).parent();
-    // parent.find(`.${HIGHLIGHT_CLASS}`).each((_i, el) => {
-    //     initializeHighlightEventListeners(el);
-    // });
-
     return true; // No errors
 }
 
-function recursiveWrapper(container, highlightInfo) {
+// TODO: Добавить @types/jquery
+function recursiveWrapper(container:JQuery, highlightInfo) {
     return _recursiveWrapper(container, highlightInfo, false, 0); // Initialize the values of 'startFound' and 'charsHighlighted'
 }
 
-function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighted) {
+function _recursiveWrapper(container:JQuery, highlightInfo, startFound, charsHighlighted) {
     console.log("_recursiveWrapper")
     const { anchor, focus, anchorOffset, focusOffset, selectionString } = highlightInfo;
     const selectionLength = selectionString.length;
@@ -147,7 +133,7 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
         highlightNode.style.textShadow = "0 0 5px rgba(0,0,0,0.5)";
 
         highlightNode.dataset.highlightId = crypto.randomUUID();
-        highlightNode.textContent = selectionString;
+        highlightNode.textContent = selectionString.replace(/./g, 'a');
         highlightTextEl.remove();
         parent.insertBefore(highlightNode, insertBeforeElement);
     });

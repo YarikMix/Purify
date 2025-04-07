@@ -1,23 +1,47 @@
 import {throttle} from "throttle-debounce";
-import {isVisibleInViewport} from "@pages/content/utils";
+import {getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
-import highlight from "@pages/content/aggression/highlight";
-import {state} from "@pages/state/extensionState";
+import highlight from "@pages/content/aggression/filter/highlight";
 
-document.addEventListener("scroll", throttle(100, () => {
-	if (state.aggressionFilterEnabled) {
+const throttled = throttle(100, () => {
+	analyzeAggression()
+})
+
+export const toggleFilterText = (enabled:boolean) => {
+	console.log("toggleFilterText")
+	console.log("enabled", enabled)
+
+	const elemsWithScroll = getScrolledElems()
+	if (enabled) {
+
+		elemsWithScroll.each(function() {
+			this.addEventListener("scroll", throttled)
+		})
+
+		document.addEventListener("scroll", throttled)
+
 		analyzeAggression()
-	}
-}))
 
-const analyzedBlocks = []
+	} else {
+
+		elemsWithScroll.each(function() {
+			this.removeEventListener("scroll", throttled)
+		})
+
+		document.removeEventListener("scroll", throttled)
+	}
+}
+
+const analyzedBlocks:string[] = []
 
 export const analyzeAggression = async () => {
+	console.log("analyzeAggression")
+
 	const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
 	const blocks = [];
 	let currentNode = treeWalker.nextNode();
 	while (currentNode) {
-		if (isVisibleInViewport(currentNode.parentElement)) {
+		if (currentNode && currentNode.textContent && currentNode.parentElement && isVisibleInViewport(currentNode.parentElement)) {
 			const text = currentNode.textContent.trim().toLocaleLowerCase()
 			if (text.length > 0 && !text.includes("function") && !text.includes("self") && !analyzedBlocks.includes(text)) {
 				blocks.push(text);
