@@ -36,6 +36,7 @@ const analyzedBlocks:string[] = []
 
 export const analyzeAggression = async () => {
 	console.log("analyzeAggression")
+
 	const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
 	const blocks = [];
 	let currentNode = treeWalker.nextNode();

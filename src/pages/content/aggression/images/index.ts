@@ -8,7 +8,6 @@ const throttled = throttle(100, () => {
     analyzeImages()
 })
 
-
 export const toggleFilterImages = (enabled:boolean) => {
     console.log("toggleFilterImages")
     console.log("enabled", enabled)
@@ -59,7 +58,9 @@ const analyzeImage = async (img:HTMLImageElement) => {
     const url = response.data.image
     if (url) {
         console.log("replace img")
-        img.src = "http://127.0.0.1:9000" + url
-        console.log("new urc", img.src)
+        // TODO: Вынести в .env
+        const newSrc = "http://127.0.0.1:9000" + url
+        img.src = newSrc
+        console.log("new src", newSrc)
     }
 }

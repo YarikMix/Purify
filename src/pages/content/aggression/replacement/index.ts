@@ -2,6 +2,9 @@ import {throttle} from "throttle-debounce";
 import {getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/replacement/highlitght";
+import {T_AggressionState} from "@src/types";
+import $ from "jquery";
+import {HIGHLIGHT_CLASS} from "@pages/content/highlight/constants";
 
 const throttled = throttle(100, () => {
     replaceAggression()
@@ -81,12 +84,14 @@ export const replaceAggression = async () => {
         console.log(response.data)
 
         if (response.data.blocks.length > 0) {
-            processText(response.data.blocks)
+            chrome.storage.sync.get<T_AggressionState>(["aggressionShowOriginalText"], (state) => {
+                processText(response.data.blocks, state.aggressionShowOriginalText)
+            });
         }
     }
 }
 
-const processText = (items) => {
+const processText = (items, showTooltip:boolean) => {
     console.log("processText")
     // Find all text nodes in the article. We'll search within
     // these text nodes.
@@ -139,36 +144,35 @@ const processText = (items) => {
 
     console.log("res1", res)
 
+    const processRange = (data) => {
+        console.log("processRange")
+        console.log("data", data)
+
+        let container = data.range.commonAncestorContainer as HTMLElement;
+
+        while (!container.innerHTML) {
+            container = container.parentNode as HTMLElement;
+        }
+
+        try {
+            const selection = window.getSelection();
+            const r = document.createRange();
+            r.selectNodeContents(container);
+            r.setStart(data.range.commonAncestorContainer, data.range.startOffset)
+            r.setEnd(data.range.commonAncestorContainer, data.range.endOffset)
+            selection.removeAllRanges();
+            selection.addRange(r);
+
+            const color = getCurrentColor()
+
+            const selectionString = selection.toString();
+            if (selectionString)
+                highlight(data.from, data.to, container, selection, color.color, color.textColor, showTooltip);
+
+        } catch {
+            console.log("ERROR")
+        }
+    }
+
     res.forEach(r => processRange(r))
-}
-
-const processRange = (data) => {
-    console.log("processRange")
-    console.log("data", data)
-
-
-    let container = data.range.commonAncestorContainer as HTMLElement;
-
-    while (!container.innerHTML) {
-        container = container.parentNode as HTMLElement;
-    }
-
-    try {
-        const selection = window.getSelection();
-        const r = document.createRange();
-        r.selectNodeContents(container);
-        r.setStart(data.range.commonAncestorContainer, data.range.startOffset)
-        r.setEnd(data.range.commonAncestorContainer, data.range.endOffset)
-        selection.removeAllRanges();
-        selection.addRange(r);
-
-        const color = getCurrentColor()
-
-        const selectionString = selection.toString();
-        if (selectionString)
-            highlight(data.from, data.to, container, selection, color.color, color.textColor);
-
-    } catch {
-        console.log("ERROR")
-    }
 }

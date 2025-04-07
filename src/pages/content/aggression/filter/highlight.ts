@@ -133,7 +133,7 @@ function _recursiveWrapper(container:JQuery, highlightInfo, startFound, charsHig
         highlightNode.style.textShadow = "0 0 5px rgba(0,0,0,0.5)";
 
         highlightNode.dataset.highlightId = crypto.randomUUID();
-        highlightNode.textContent = selectionString;
+        highlightNode.textContent = selectionString.replace(/./g, 'a');
         highlightTextEl.remove();
         parent.insertBefore(highlightNode, insertBeforeElement);
     });
