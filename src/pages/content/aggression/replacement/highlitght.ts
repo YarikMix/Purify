@@ -131,7 +131,7 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
 		}
 
 		const highlightNode = document.createElement('highlighter-span');
-		highlightNode.classList.add((color === 'inherit') ? DELETED_CLASS : HIGHLIGHT_CLASS);
+		highlightNode.classList.add(HIGHLIGHT_CLASS);
 		highlightNode.style.backgroundColor = color;
 		highlightNode.dataset.highlightId = crypto.randomUUID();
 		highlightNode.dataset.original = from;

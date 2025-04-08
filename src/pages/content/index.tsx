@@ -36,12 +36,12 @@ if(document.readyState !== 'complete') {
     window.addEventListener("load", () => {
         setTimeout(() => {
             initialize()
-        }, 1500)
+        }, 250)
     });
 } else {
     setTimeout(() => {
         initialize()
-    }, 500)
+    }, 250)
 }
 
 

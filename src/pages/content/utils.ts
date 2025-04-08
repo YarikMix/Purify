@@ -44,7 +44,7 @@ export const isVisibleInViewport = (element) => {
 	return (
 		rect.top >= 0 &&
 		rect.left >= 0 &&
-		rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+		rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) * 4 &&
 		rect.right <= (window.innerWidth || document.documentElement.clientWidth)
 	);
 }
@@ -57,4 +57,4 @@ export const getScrolledElems = () => $('body *').filter(function() {
 	return ($(this).scrollTop() != 0 || $(this).css('overflow') == 'scroll');
 });
 
-export const getImages = () => document.querySelectorAll<HTMLImageElement>('a, img, picture, div, figure')
+export const getImages = () => document.querySelectorAll<HTMLImageElement>('img')
