@@ -2,7 +2,9 @@ import {getImages, getScrolledElems, isVisibleInViewport} from "@pages/content/u
 import axios from "axios";
 import {throttle} from "throttle-debounce";
 
-const analyzedImages:Record<string, string> = {}
+const analyzedImagesDict:Record<string, string> = {}
+
+const newSrcArray:string[] = []
 
 const throttled = throttle(100, () => {
     analyzeImages()
@@ -40,9 +42,9 @@ const analyzeImages = () => {
         if (img.src != undefined) {
             console.log("isVisibleInViewport", isVisibleInViewport(img))
 
-            if (isVisibleInViewport(img)) {
-                if (img.src in analyzedImages) {
-                    replaceImageSrc(img, analyzedImages[img.src])
+            if (isVisibleInViewport(img) && !newSrcArray.includes(img.src)) {
+                if (img.src in analyzedImagesDict) {
+                    replaceImageSrc(img, analyzedImagesDict[img.src])
                 } else {
                     analyzeImage(img)
                 }
@@ -74,4 +76,5 @@ const replaceImageSrc = (img:HTMLImageElement, url:string) => {
     const newSrc = "http://127.0.0.1:9000" + url
     img.src = newSrc
     console.log("new src", newSrc)
+    newSrcArray.push(newSrc)
 }
