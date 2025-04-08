@@ -4,19 +4,29 @@ import {throttle} from "throttle-debounce";
 
 const analyzedImagesDict:Record<string, string> = {}
 
-const newSrcArray:string[] = []
+const analyzedImages:string[] = []
 
 const throttled = throttle(100, () => {
     analyzeImages()
 })
 
+
 export const toggleFilterImages = (enabled:boolean) => {
     console.log("toggleFilterImages")
     console.log("enabled", enabled)
 
+    const observer = new MutationObserver(()=>{
+        analyzeImages()
+    });
+
     const elemsWithScroll = getScrolledElems()
 
     if (enabled) {
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+        });
+
         elemsWithScroll.each(function() {
             this.addEventListener("scroll", throttled)
         })
@@ -24,8 +34,9 @@ export const toggleFilterImages = (enabled:boolean) => {
         document.addEventListener("scroll", throttled)
 
         analyzeImages()
-
     } else {
+        observer.disconnect()
+
         elemsWithScroll.each(function() {
             this.removeEventListener("scroll", throttled)
         })
@@ -38,15 +49,23 @@ const analyzeImages = () => {
     console.log("analyzeImages")
     const images = getImages()
 
+    console.log("images", images)
+
+    console.log("analyzedImagesDict", analyzedImagesDict)
+    console.log("newSrcArray", analyzedImages)
+
     for (let img of images) {
         if (img.src != undefined) {
             console.log("isVisibleInViewport", isVisibleInViewport(img))
 
-            if (isVisibleInViewport(img) && !newSrcArray.includes(img.src)) {
+            if (isVisibleInViewport(img)) {
                 if (img.src in analyzedImagesDict) {
                     replaceImageSrc(img, analyzedImagesDict[img.src])
                 } else {
-                    analyzeImage(img)
+                    if (!analyzedImages.includes(img.src)) {
+                        analyzedImages.push(img.src)
+                        analyzeImage(img)
+                    }
                 }
             }
         }
@@ -74,7 +93,10 @@ const analyzeImage = async (img:HTMLImageElement) => {
 
 const replaceImageSrc = (img:HTMLImageElement, url:string) => {
     const newSrc = "http://127.0.0.1:9000" + url
+
+    analyzedImagesDict[img.src] = url
+    analyzedImages.push(newSrc)
+
     img.src = newSrc
     console.log("new src", newSrc)
-    newSrcArray.push(newSrc)
 }
