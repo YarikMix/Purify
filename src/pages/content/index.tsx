@@ -20,7 +20,7 @@ const initialize = () => {
         if (state.aggressionEnabled) {
             state.aggressionFilterText && toggleFilterText(state.aggressionFilterText)
             state.aggressionReplacementText && toggleReplacementText(state.aggressionReplacementText)
-            state.aggressionFilterImages && toggleFilterImages(state.aggressionFilterImages)
+            // state.aggressionFilterImages && toggleFilterImages(state.aggressionFilterImages)
         }
     });
 
@@ -39,9 +39,7 @@ if(document.readyState !== 'complete') {
         }, 250)
     });
 } else {
-    setTimeout(() => {
-        initialize()
-    }, 250)
+    initialize()
 }
 
 
