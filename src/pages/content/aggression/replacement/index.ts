@@ -91,6 +91,8 @@ export const replaceAggression = async () => {
 
 const processText = (items, showTooltip:boolean) => {
     console.log("processText")
+    console.log("items", items)
+
     // Find all text nodes in the article. We'll search within
     // these text nodes.
     const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);

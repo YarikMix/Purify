@@ -1,7 +1,7 @@
 import axios from "axios";
 import hotkeys from "hotkeys-js";
 
-export const simplifyTextHotkeyInit = async () => {
+export const simplifyTextHotkeyInit = async (enabled:boolean) => {
     console.log("simplifyTextInit")
     hotkeys('g', async (e) => {
         e.preventDefault()
@@ -19,14 +19,20 @@ export const simplifyTextHotkeyInit = async () => {
         console.log("text", text)
 
         const response = await axios.post('http://127.0.0.1:8080/api/v1/simplify', {
-            blocks: [text],
-            preconception: true,
-            agitation: true
+            blocks: [text]
         })
 
         console.log(response.data)
 
-        const parent = selection.focusNode.parentElement as HTMLElement
-        parent.innerText = parent.innerText.replace(selection.toString(), response.data.blocks[0])
+        const to = response.data.result[0].to
+
+        console.log("to", to)
+
+        if (to) {
+            const parent = selection.focusNode.parentElement as HTMLElement
+            parent.innerText = parent.innerText.replace(selection.toString(), response.data.result[0].to)
+            parent.style.fontWeight = "bold"
+        }
+
     });
 }
