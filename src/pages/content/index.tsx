@@ -5,6 +5,7 @@ import {toggleReplacementText} from "@pages/content/aggression/replacement";
 import {toggleFilterImages} from "@pages/content/aggression/images";
 
 import {T_AppState} from "@src/types";
+import {simplifyTextInit} from "@pages/content/simplify/hotkey";
 
 
 try {
@@ -18,9 +19,10 @@ const initialize = () => {
     console.log("aggression initialized")
     chrome.storage.sync.get<T_AppState>(["aggressionEnabled", "aggressionFilterText", "aggressionFilterImages", "aggressionReplacementText", "aggressionShowOriginalText"], (state) => {
         if (state.aggressionEnabled) {
-            state.aggressionFilterText && toggleFilterText(state.aggressionFilterText)
-            state.aggressionReplacementText && toggleReplacementText(state.aggressionReplacementText)
+            // state.aggressionFilterText && toggleFilterText(state.aggressionFilterText)
+            // state.aggressionReplacementText && toggleReplacementText(state.aggressionReplacementText)
             // state.aggressionFilterImages && toggleFilterImages(state.aggressionFilterImages)
+            // simplifyTextInit()
         }
     });
 
