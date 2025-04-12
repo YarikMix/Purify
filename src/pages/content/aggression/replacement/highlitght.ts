@@ -1,5 +1,5 @@
 import $ from "jquery";
-import {DELETED_CLASS, HIGHLIGHT_CLASS} from "@pages/content/highlight/constants";
+import {HIGHLIGHT_CLASS} from "@pages/content/highlight/constants";
 
 const showTooltip = (highlightId:string) => {
 	const highlightEl = document.querySelector<HTMLElement>(`highlighter-span[data-highlight-id='${highlightId}']`)
@@ -132,10 +132,11 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
 
 		const highlightNode = document.createElement('highlighter-span');
 		highlightNode.classList.add(HIGHLIGHT_CLASS);
-		highlightNode.style.backgroundColor = color;
+		// highlightNode.style.backgroundColor = color;
 		highlightNode.dataset.highlightId = crypto.randomUUID();
 		highlightNode.dataset.original = from;
-		highlightNode.style.color = textColor;
+		highlightNode.style.fontWeight = '600'
+		// highlightNode.style.color = textColor;
 		highlightNode.textContent = to;
 		highlightTextEl.remove();
 		parent.insertBefore(highlightNode, insertBeforeElement);
