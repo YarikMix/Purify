@@ -5,7 +5,7 @@ import {toggleReplacementText} from "@pages/content/aggression/replacement";
 import {toggleFilterImages} from "@pages/content/aggression/images";
 
 import {T_AppState} from "@src/types";
-import {simplifyTextInit} from "@pages/content/simplify/hotkey";
+import {simplifyTextHotkeyInit} from "@pages/content/simplify/hotkey";
 
 
 try {
@@ -22,7 +22,7 @@ const initialize = () => {
             // state.aggressionFilterText && toggleFilterText(state.aggressionFilterText)
             // state.aggressionReplacementText && toggleReplacementText(state.aggressionReplacementText)
             // state.aggressionFilterImages && toggleFilterImages(state.aggressionFilterImages)
-            // simplifyTextInit()
+            simplifyTextHotkeyInit()
         }
     });
 

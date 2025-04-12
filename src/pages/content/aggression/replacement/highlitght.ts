@@ -1,5 +1,5 @@
 import $ from "jquery";
-import {DELETED_CLASS, HIGHLIGHT_CLASS} from "@pages/content/highlight/constants";
+import {HIGHLIGHT_CLASS} from "@pages/content/highlight/constants";
 
 const showTooltip = (highlightId:string) => {
 	const highlightEl = document.querySelector<HTMLElement>(`highlighter-span[data-highlight-id='${highlightId}']`)

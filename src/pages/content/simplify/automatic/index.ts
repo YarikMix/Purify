@@ -5,36 +5,23 @@ import highlight from "@pages/content/aggression/replacement/highlitght";
 import {T_AggressionState} from "@src/types";
 
 const throttled = throttle(100, () => {
-    replaceAggression()
+    analyzePage()
 })
 
-export const toggleReplacementText = (enabled:boolean) => {
-    console.log("toggleReplacementText")
+export const simplifyTextDynamicInit = (enabled:boolean) => {
+    console.log("simplifyTextDynamicInit")
     console.log("enabled", enabled)
 
     const elemsWithScroll = getScrolledElems()
 
     if (enabled) {
-        console.log("replacement.init")
-
         elemsWithScroll.each(function() {
             this.addEventListener("scroll", throttled)
         })
 
         document.addEventListener("scroll", throttled)
 
-        replaceAggression()
-
-        const tooltip = document.createElement("div")
-
-        const span = document.createElement("span")
-        span.classList.add("highlight__tooltip-text")
-
-        tooltip.appendChild(span)
-
-        tooltip.classList.add("highlight__tooltip")
-
-        document.body.appendChild(tooltip)
+        analyzePage()
     } else {
 
         elemsWithScroll.each(function() {
@@ -56,7 +43,7 @@ function getCurrentColor() {
 
 const analyzedBlocks = []
 
-export const replaceAggression = async () => {
+export const analyzePage = async () => {
     console.log("replaceAggression")
     const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     const blocks = [];
