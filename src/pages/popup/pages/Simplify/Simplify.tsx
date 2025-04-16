@@ -1,8 +1,9 @@
 import Toggle from "@pages/popup/components/Toggle/Toggle";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import KeyboardTooltip from "@pages/popup/components/KeyboardTooltip/KeyboardTooltip";
 import InfoBlockSimplify from "@pages/popup/components/InfoBlockSimplify/InfoBlockSimplify";
 import {DEFAULT_SIMPLIFY_STATE, T_SimplifyState} from "@src/types";
+import {animated, useSpring} from "react-spring";
 
 export const Simplify = () => {
 
@@ -37,6 +38,14 @@ export const Simplify = () => {
         })
     }
 
+    const ref = useRef<HTMLDivElement>(null);
+
+    const props = useSpring({
+        delay: 50,
+        from: { height: !state?.simplifyEnabled || ref.current ? '0px' : '75px' },
+        to: { height: state?.simplifyEnabled ? '75px' : '0px' },
+    });
+
     if (!state) {
         return
     }
@@ -48,7 +57,7 @@ export const Simplify = () => {
                     <h1 className="text-stone-900 text-base font-black">Упрощение текста</h1>
                     <Toggle bg="dark" value={state.simplifyEnabled} setValue={handleToggleSimplifyEnabled} />
                 </div>
-                <div className="pl-4 flex flex-col gap-4">
+                <animated.nav style={props} ref={ref} className="pl-4 flex flex-col gap-4 overflow-hidden">
                     <div className="flex justify-between items-center">
                         <span className="text-stone-900 text-base">На всей странице</span>
                         <Toggle bg="dark" value={state.simplifyDynamic} setValue={handleToggleSimplifyDynamic} />
@@ -56,10 +65,10 @@ export const Simplify = () => {
                     <div className="flex justify-between items-center">
                         <span className="text-stone-900 text-base">В выделенном тексте</span>
                         <div className="text-base">
-                            <KeyboardTooltip keys={["Cmd", "F"]} />
+                            <KeyboardTooltip keys={["G"]} />
                         </div>
                     </div>
-                </div>
+                </animated.nav>
             </div>
             {/*<InfoBlockSimplify />*/}
         </div>

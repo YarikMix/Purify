@@ -1,10 +1,13 @@
 import axios from "axios";
 import hotkeys from "hotkeys-js";
+import {API_URL} from "@src/consts";
 
-export const simplifyTextHotkeyInit = async (enabled:boolean) => {
+export const toggleSimplifyTextHotkey = async (enabled:boolean) => {
     console.log("simplifyTextInit")
-    hotkeys('g', async (e) => {
-        e.preventDefault()
+
+
+    const handleHotkeyPress = (e:KeyboardEvent) => {
+        // e.preventDefault()
 
         console.log("hotkey press")
 
@@ -18,21 +21,26 @@ export const simplifyTextHotkeyInit = async (enabled:boolean) => {
 
         console.log("text", text)
 
-        const response = await axios.post('http://127.0.0.1:8080/api/v1/simplify', {
+        axios.post(API_URL + '/simplify', {
             blocks: [text]
+        }).then(response => {
+            console.log(response.data)
+
+            const to = response.data.result[0].to
+
+            console.log("to", to)
+
+            if (to && selection?.focusNode) {
+                const parent = selection.focusNode.parentElement as HTMLElement
+                parent.innerText = parent.innerText.replace(selection.toString(), response.data.result[0].to)
+                parent.style.fontWeight = "bold"
+            }
         })
+    }
 
-        console.log(response.data)
-
-        const to = response.data.result[0].to
-
-        console.log("to", to)
-
-        if (to) {
-            const parent = selection.focusNode.parentElement as HTMLElement
-            parent.innerText = parent.innerText.replace(selection.toString(), response.data.result[0].to)
-            parent.style.fontWeight = "bold"
-        }
-
-    });
+    if (enabled) {
+        hotkeys('g', handleHotkeyPress);
+    } else {
+        hotkeys.unbind('g');
+    }
 }

@@ -1,6 +1,7 @@
 import {getImages, getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import {throttle} from "throttle-debounce";
+import {API_URL} from "@src/consts";
 
 const analyzedImagesDict:Record<string, string> = {}
 
@@ -77,7 +78,7 @@ const analyzeImage = async (img:HTMLImageElement) => {
     console.log("src", img.src)
 
     try {
-        const response = await axios.post('http://127.0.0.1:8080/api/v1/process_image/', {
+        const response = await axios.post(API_URL + '/process_image/', {
             image: img.src
         })
 
