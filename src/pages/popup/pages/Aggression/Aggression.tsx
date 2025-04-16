@@ -1,10 +1,11 @@
 import Toggle from "@pages/popup/components/Toggle/Toggle";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Option from "@pages/popup/components/Option/Option";
 import SiteSecurityInfo from "@pages/popup/components/SiteSecurityInfo/SiteSecurityInfo";
 import InfoBlockAggressive from "@pages/popup/components/InfoBlockAggressive/InfoBlockAggressive";
 import InfoBlockObscene from "@pages/popup/components/InfoBlockObscene/InfoBlockObscene";
 import {T_AggressionState} from "@src/types";
+import {animated, useSpring, config} from "react-spring";
 
 const Aggression = () => {
 
@@ -92,6 +93,14 @@ const Aggression = () => {
         })
     }
 
+    const ref = useRef<HTMLDivElement>(null);
+
+    const props = useSpring({
+        delay: 100,
+        from: { height: !state?.aggressionEnabled || ref.current ? '0px' : '150px' },
+        to: { height: state?.aggressionEnabled ? '150px' : '0px' },
+    });
+
     if (!state) {
         return
     }
@@ -103,25 +112,28 @@ const Aggression = () => {
                     <h1 className="text-stone-900 text-base font-black">Анализ агрессии</h1>
                     <Toggle value={state.aggressionEnabled} setValue={handleToggleAggressionEnabled} bg="dark" />
                 </div>
-                <div className="pl-4 flex flex-col gap-4">
-                    <Option label="Фильтровать текст" value={state.aggressionFilterText} onToggle={handleToggleFilterText} disabled={!state.aggressionEnabled}/>
-                    <Option label="Заменять текст" value={state.aggressionReplacementText} onToggle={handleToggleReplacementText} disabled={!state.aggressionEnabled}/>
+                <animated.nav style={props} ref={ref} className="pl-4 flex flex-col gap-4 overflow-hidden">
+                    <Option label="Фильтровать текст" value={state.aggressionFilterText}
+                            onToggle={handleToggleFilterText} disabled={!state.aggressionEnabled}/>
+                    <Option label="Заменять текст" value={state.aggressionReplacementText}
+                            onToggle={handleToggleReplacementText} disabled={!state.aggressionEnabled}/>
                     <Option label="Отображать оригинальный текст"
                             value={state.aggressionShowOriginalText}
                             onToggle={handleToggleShowOriginalText}
                             disabled={!state.aggressionEnabled || !state.aggressionReplacementText}
                             sub={true}
                     />
-                    <Option label="Фильтровать изображения" value={state.aggressionFilterImages} onToggle={handleToggleFilterImages} disabled={!state.aggressionEnabled} />
-                </div>
+                    <Option label="Фильтровать изображения" value={state.aggressionFilterImages}
+                            onToggle={handleToggleFilterImages} disabled={!state.aggressionEnabled}/>
+                </animated.nav>
             </div>
-            <div className="flex flex-col gap-4">
-                <SiteSecurityInfo aggressive={true}/>
-                <div className="flex gap-4 justify-around">
-                    <InfoBlockAggressive />
-                    <InfoBlockObscene />
-                </div>
-            </div>
+            {/*<div className="flex flex-col gap-4">*/}
+            {/*    <SiteSecurityInfo aggressive={true}/>*/}
+            {/*    <div className="flex gap-4 justify-around">*/}
+            {/*        <InfoBlockAggressive />*/}
+            {/*        <InfoBlockObscene />*/}
+            {/*    </div>*/}
+            {/*</div>*/}
         </div>
     )
 }

@@ -3,6 +3,7 @@ import {getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/replacement/highlitght";
 import {T_AggressionState} from "@src/types";
+import {API_URL} from "@src/consts";
 
 const throttled = throttle(100, () => {
     replaceAggression()
@@ -73,7 +74,7 @@ export const replaceAggression = async () => {
     }
 
     if (blocks.length > 0) {
-        const response = await axios.post('http://127.0.0.1:8080/api/v1/replace', {
+        const response = await axios.post(API_URL + '/replace', {
             blocks,
             preconception: true,
             agitation: true

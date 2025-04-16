@@ -3,12 +3,13 @@ import {getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/replacement/highlitght";
 import {T_AggressionState, T_SimplifyState} from "@src/types";
+import {API_URL} from "@src/consts";
 
 const throttled = throttle(100, () => {
     analyzePage()
 })
 
-export const simplifyTextDynamicInit = (enabled:boolean) => {
+export const toggleSimplifyTextDynamic = (enabled:boolean) => {
     console.log("simplifyTextDynamicInit")
     console.log("enabled", enabled)
 
@@ -67,7 +68,7 @@ export const analyzePage = async () => {
     console.log("blocks original", blocks)
 
     if (blocks.length > 0) {
-        const response = await axios.post('http://127.0.0.1:8080/api/v1/simplify', {
+        const response = await axios.post(API_URL + '/simplify', {
             blocks
         })
 

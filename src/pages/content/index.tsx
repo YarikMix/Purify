@@ -4,9 +4,9 @@ import {toggleFilterText} from "@pages/content/aggression/filter";
 import {toggleReplacementText} from "@pages/content/aggression/replacement";
 import {toggleFilterImages} from "@pages/content/aggression/images";
 
-import {DEFAULT_AGGRESSION_STATE, DEFAULT_APP_STATE, T_AppState} from "@src/types";
-import {simplifyTextHotkeyInit} from "@pages/content/simplify/hotkey";
-import {simplifyTextDynamicInit} from "@pages/content/simplify/automatic";
+import {DEFAULT_APP_STATE, T_AppState} from "@src/types";
+import {toggleSimplifyTextHotkey} from "@pages/content/simplify/hotkey";
+import {toggleSimplifyTextDynamic} from "@pages/content/simplify/automatic";
 
 
 try {
@@ -18,6 +18,7 @@ try {
 
 const initialize = () => {
     console.log("initialize")
+
     chrome.storage.sync.get<T_AppState>(DEFAULT_APP_STATE, (state) => {
 
         console.log("state", state)
@@ -30,22 +31,44 @@ const initialize = () => {
 
         if (state.simplifyEnabled) {
             if (state.simplifyDynamic) {
-                simplifyTextDynamicInit(true)
+                toggleSimplifyTextDynamic(true)
             } else {
-                simplifyTextHotkeyInit(true)
+                toggleSimplifyTextHotkey(true)
             }
         }
     });
 
     chrome.storage.onChanged.addListener((state) => {
+        console.log("chrome.storage.onChanged")
+        console.log("state", state)
+
+        if ("aggressionEnabled" in state) {
+            if (!state.aggressionEnabled.newValue) {
+                toggleFilterText(false)
+                toggleReplacementText(false)
+                toggleFilterImages(false)
+            }
+        }
+
         if ("aggressionFilterText" in state) {
             toggleFilterText(state.aggressionFilterText.newValue)
         }
 
-        // if ("simplifyDynamic" in state) {
-        //     simplifyTextDynamicInit(state.aggressionFilterText.newValue)
-        //     simplifyTextHotkeyInit(!state.simplifyDynamic.newValue)
-        // }
+        if ("aggressionReplacementText" in state) {
+            toggleReplacementText(state.aggressionReplacementText.newValue)
+        }
+
+        if ("simplifyEnabled" in state) {
+            if (!state.simplifyEnabled.newValue) {
+                toggleSimplifyTextDynamic(false)
+                toggleSimplifyTextHotkey(false)
+            }
+        }
+
+        if ("simplifyDynamic" in state) {
+            toggleSimplifyTextDynamic(state.simplifyDynamic.newValue)
+            toggleSimplifyTextHotkey(!state.simplifyDynamic.newValue)
+        }
     });
 }
 

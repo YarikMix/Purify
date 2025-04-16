@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Logo from "@pages/popup/components/Logo/Logo";
 import {Route, Routes} from 'react-router-dom';
 import Home from "@pages/popup/pages/Home/Home";

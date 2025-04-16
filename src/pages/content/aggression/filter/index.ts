@@ -2,6 +2,7 @@ import {throttle} from "throttle-debounce";
 import {getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/filter/highlight";
+import {IS_DEBUG} from "@src/consts";
 
 const throttled = throttle(100, () => {
 	analyzeAggression()
@@ -52,7 +53,7 @@ export const analyzeAggression = async () => {
 	}
 
 	if (blocks.length > 0) {
-		const response = await axios.post('http://127.0.0.1:5001/analyze', {
+		const response = await axios.post(IS_DEBUG ? 'http://127.0.0.1:5001/analyze' : 'https://purify.pro/ml/analyze', {
 			blocks
 		})
 

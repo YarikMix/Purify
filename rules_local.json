@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution" : "http://127.0.0.1:8080/api/v1/swap_image?originalUrl=\\0"
+      }
+    },
+    "condition": {
+      "resourceTypes": ["image"],
+      "regexFilter": "^https://i.pinimg.com(.*)"
+    }
+  }
+]
