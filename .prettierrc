@@ -1,0 +1,7 @@
+{
+  "editor.formatOnSave": true,
+  "tabWidth": 8,
+  "useTabs": true,
+  "bracketSpacing": false,
+  "trailingComma": "all"
+}

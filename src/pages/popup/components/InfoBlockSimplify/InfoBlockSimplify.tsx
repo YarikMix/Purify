@@ -1,18 +1,28 @@
-import styles from "./InfoBlockSimplify.module.css"
-import GraphGreen from "@assets/graph_green.svg?react"
+import styles from "./InfoBlockSimplify.module.css";
+import GraphGreen from "@assets/graph_green.svg?react";
 import clsx from "clsx";
+import {percentage} from "@pages/popup/utils";
 
-const InfoBlockSimplify = ({percentage=46, count=256}) => {
+interface IProps {
+	replaced: number;
+	total: number;
+}
+
+const InfoBlockSimplify = ({replaced, total}: IProps) => {
 	return (
 		<div className={clsx(styles.container, "shadow-lg")}>
 			<span className="text-sm">Упрощено</span>
-			<span className="text-2xl">{percentage}%</span>
-			<span className="text-sm">{count} слов сократилось</span>
+			<span className="text-2xl">
+				{total ? percentage(replaced, total) : 0}%
+			</span>
+			<span className="text-sm">
+				{replaced} слов сократилось
+			</span>
 			<div className="flex justify-center w-full">
-				<GraphGreen/>
+				<GraphGreen />
 			</div>
 		</div>
-	)
-}
+	);
+};
 
-export default InfoBlockSimplify
+export default InfoBlockSimplify;
