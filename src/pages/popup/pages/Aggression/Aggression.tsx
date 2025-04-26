@@ -156,7 +156,7 @@ const Aggression = () => {
 					className="pl-4 flex flex-col gap-4 overflow-hidden"
 				>
 					<Option
-						label="Фильтровать текст"
+						label="Фильтровать мат"
 						value={
 							state.aggressionFilterText
 						}
@@ -214,17 +214,19 @@ const Aggression = () => {
 					<div className="flex flex-col gap-4 items-center">
 						<SiteSecurityInfo
 							aggressive={
-								(stats.wordsReplaced *
-									2) /
+								Math.round(
+									stats.wordsReplaced *
+										1.5,
+								) /
 									stats.wordsAnalyzed >
 								AGGRESSIVE_THRESHOLD
 							}
 						/>
 						<InfoBlockAggressive
-							replaced={
+							replaced={Math.round(
 								stats.wordsReplaced *
-								2
-							}
+									1.5,
+							)}
 							total={
 								stats.wordsAnalyzed
 							}

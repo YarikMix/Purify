@@ -1,4 +1,4 @@
-export const IS_DEBUG = true;
+export const IS_DEBUG = false;
 
 export const API_URL = IS_DEBUG
 	? "http://127.0.0.1:8080/api/v1"
@@ -18,4 +18,4 @@ export const BLACK_LIST = [
 	"position:",
 ];
 
-export const AGGRESSIVE_THRESHOLD = 0.15;
+export const AGGRESSIVE_THRESHOLD = 0.1;
