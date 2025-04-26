@@ -10,7 +10,7 @@
     },
     "condition": {
       "resourceTypes": ["image"],
-      "regexFilter": "^https://i.pinimg.com(.*)"
+      "regexFilter": "^https://purify.pro/assets/(.*)"
     }
   }
 ]

@@ -132,11 +132,12 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
 
 		const highlightNode = document.createElement('highlighter-span');
 		highlightNode.classList.add(HIGHLIGHT_CLASS);
-		// highlightNode.style.backgroundColor = color;
 		highlightNode.dataset.highlightId = crypto.randomUUID();
 		highlightNode.dataset.original = from;
 		highlightNode.style.fontWeight = '600'
+		highlightNode.style.fontStyle = 'italic'
 		// highlightNode.style.color = textColor;
+		// highlightNode.style.backgroundColor = color;
 		highlightNode.textContent = to;
 		highlightTextEl.remove();
 		parent.insertBefore(highlightNode, insertBeforeElement);
