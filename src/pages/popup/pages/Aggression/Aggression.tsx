@@ -168,7 +168,7 @@ const Aggression = () => {
 						}
 					/>
 					<Option
-						label="Заменять текст"
+						label="Заменять агрессию"
 						value={
 							state.aggressionReplacementText
 						}
