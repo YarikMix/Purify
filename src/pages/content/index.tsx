@@ -1,13 +1,14 @@
 import "./style.css";
 
-import { toggleFilterText } from "@pages/content/aggression/filter";
-import { toggleReplacementText } from "@pages/content/aggression/replacement";
-import { toggleFilterImages } from "@pages/content/aggression/images";
+import {toggleFilterText} from "@pages/content/aggression/filter";
+import {toggleReplacementText} from "@pages/content/aggression/replacement";
+import {toggleFilterImages} from "@pages/content/aggression/images";
 
-import { DEFAULT_APP_STATE, T_AppState } from "@src/types";
-import { toggleSimplifyTextHotkey } from "@pages/content/simplify/hotkey";
-import { toggleSimplifyTextDynamic } from "@pages/content/simplify/automatic";
+import {T_AppState} from "@src/types";
+import {toggleSimplifyTextHotkey} from "@pages/content/simplify/hotkey";
+import {toggleSimplifyTextDynamic} from "@pages/content/simplify/automatic";
 import sendPageStats from "@pages/content/stats";
+import {DEFAULT_APP_STATE} from "@src/state";
 
 try {
 	console.log("content script loaded");
@@ -25,6 +26,7 @@ const clearPageStats = () => {
 			wordsReplaced: 0,
 			wordsAnalyzed: 0,
 		},
+		simplifyProcessing: false,
 	});
 };
 

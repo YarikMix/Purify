@@ -1,46 +1,64 @@
 import axios from "axios";
 import hotkeys from "hotkeys-js";
 import {API_URL} from "@src/consts";
+import {T_SimplifyState} from "@src/types";
 
-export const toggleSimplifyTextHotkey = async (enabled:boolean) => {
-    console.log("simplifyTextInit")
+export const toggleSimplifyTextHotkey = async (enabled: boolean) => {
+	console.log("simplifyTextInit");
 
+	const handleHotkeyPress = (e: KeyboardEvent) => {
+		e.preventDefault();
 
-    const handleHotkeyPress = (e:KeyboardEvent) => {
-        // e.preventDefault()
+		chrome.storage.sync.get<T_SimplifyState>(["simplifyProcessing"], (state) => {
+			if (!state.simplifyProcessing) {
+				const selection = window.getSelection();
 
-        console.log("hotkey press")
+				console.log("selection?.focusNode", selection?.focusNode);
 
-        const selection = window.getSelection();
+				console.log("selection?.focusNode?.textContent", selection?.focusNode?.textContent);
 
-        if (!selection?.focusNode?.textContent) {
-            return
-        }
+				console.log("selection.toString()", selection?.toString());
 
-        const text = selection.toString()
+				if (!selection || !selection.focusNode || !selection.focusNode?.textContent || !selection.toString()) {
+					return;
+				}
 
-        console.log("text", text)
+				chrome.storage.sync.set({
+					simplifyProcessing: true,
+				});
 
-        axios.post(API_URL + '/simplify', {
-            blocks: [text]
-        }).then(response => {
-            console.log(response.data)
+				const text = selection.toString();
 
-            const to = response.data.result[0].to
+				axios.post(API_URL + "/simplify", {
+					blocks: [text],
+				})
+					.then((response) => {
+						const to = response.data.result[0].to;
 
-            console.log("to", to)
+						if (to && selection?.focusNode) {
+							const parent = selection.focusNode.parentElement as HTMLElement;
 
-            if (to && selection?.focusNode) {
-                const parent = selection.focusNode.parentElement as HTMLElement
-                parent.innerText = parent.innerText.replace(selection.toString(), response.data.result[0].to)
-                parent.style.fontWeight = "bold"
-            }
-        })
-    }
+							parent.innerText = parent.innerText.replace(selection.toString(), response.data.result[0].to);
+							parent.style.fontWeight = "bold";
+							parent.style.fontStyle = "italic";
 
-    if (enabled) {
-        hotkeys('g', handleHotkeyPress);
-    } else {
-        hotkeys.unbind('g');
-    }
-}
+							if (selection.empty) {
+								selection.empty();
+							}
+						}
+					})
+					.finally(() => {
+						chrome.storage.sync.set({
+							simplifyProcessing: false,
+						});
+					});
+			}
+		});
+	};
+
+	if (enabled) {
+		hotkeys("g", handleHotkeyPress);
+	} else {
+		hotkeys.unbind("g");
+	}
+};
