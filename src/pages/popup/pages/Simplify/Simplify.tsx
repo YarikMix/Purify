@@ -2,9 +2,9 @@ import Toggle from "@pages/popup/components/Toggle/Toggle";
 import React, {useEffect, useRef, useState} from "react";
 import KeyboardTooltip from "@pages/popup/components/KeyboardTooltip/KeyboardTooltip";
 import InfoBlockSimplify from "@pages/popup/components/InfoBlockSimplify/InfoBlockSimplify";
-import {T_SimplifyState, T_Stats} from "@src/types";
+import {T_SimplifyState, T_Stats} from "@src/utils/types";
 import {animated, useSpring} from "react-spring";
-import {DEFAULT_SIMPLIFY_STATE} from "@src/state";
+import {DEFAULT_SIMPLIFY_STATE} from "@src/utils/state";
 import {Dropdown} from "@pages/popup/components/Dropdown/Dropdown";
 
 export const Simplify = () => {

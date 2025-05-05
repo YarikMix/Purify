@@ -3,9 +3,9 @@ import React, {useEffect, useRef, useState} from "react";
 import Option from "@pages/popup/components/Option/Option";
 import SiteSecurityInfo from "@pages/popup/components/SiteSecurityInfo/SiteSecurityInfo";
 import InfoBlockAggressive from "@pages/popup/components/InfoBlockAggressive/InfoBlockAggressive";
-import {T_AggressionState, T_Stats} from "@src/types";
+import {T_AggressionState, T_Stats} from "@src/utils/types";
 import {animated, useSpring} from "react-spring";
-import {AGGRESSIVE_THRESHOLD} from "@src/consts";
+import {AGGRESSIVE_THRESHOLD} from "@src/utils/consts";
 
 const Aggression = () => {
 	const [state, setState] = useState<T_AggressionState>(null);

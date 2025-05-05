@@ -2,66 +2,63 @@ import {throttle} from "throttle-debounce";
 import {getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/filter/highlight";
-import {IS_DEBUG} from "@src/consts";
+import {IS_DEBUG} from "@src/utils/consts";
 
 const throttled = throttle(100, () => {
-	analyzeAggression()
-})
+	analyzeAggression();
+});
 
-export const toggleFilterText = (enabled:boolean) => {
-	console.log("toggleFilterText")
-	console.log("enabled", enabled)
+export const toggleFilterText = (enabled: boolean) => {
+	console.log("toggleFilterText");
+	console.log("enabled", enabled);
 
-	const elemsWithScroll = getScrolledElems()
+	const elemsWithScroll = getScrolledElems();
 	if (enabled) {
+		elemsWithScroll.each(function () {
+			this.addEventListener("scroll", throttled);
+		});
 
-		elemsWithScroll.each(function() {
-			this.addEventListener("scroll", throttled)
-		})
+		document.addEventListener("scroll", throttled);
 
-		document.addEventListener("scroll", throttled)
-
-		analyzeAggression()
-
+		analyzeAggression();
 	} else {
+		elemsWithScroll.each(function () {
+			this.removeEventListener("scroll", throttled);
+		});
 
-		elemsWithScroll.each(function() {
-			this.removeEventListener("scroll", throttled)
-		})
-
-		document.removeEventListener("scroll", throttled)
+		document.removeEventListener("scroll", throttled);
 	}
-}
+};
 
-const analyzedBlocks:string[] = []
+const analyzedBlocks: string[] = [];
 
 export const analyzeAggression = async () => {
-	console.log("analyzeAggression")
+	console.log("analyzeAggression");
 
 	const treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
 	const blocks = [];
 	let currentNode = treeWalker.nextNode();
 	while (currentNode) {
 		if (currentNode && currentNode.textContent && currentNode.parentElement && isVisibleInViewport(currentNode.parentElement)) {
-			const text = currentNode.textContent.trim().toLocaleLowerCase()
+			const text = currentNode.textContent.trim().toLocaleLowerCase();
 			if (text.length > 0 && !text.includes("function") && !text.includes("self") && !analyzedBlocks.includes(text)) {
 				blocks.push(text);
-				analyzedBlocks.push(text)
+				analyzedBlocks.push(text);
 			}
 		}
 		currentNode = treeWalker.nextNode();
 	}
 
 	if (blocks.length > 0) {
-		const response = await axios.post(IS_DEBUG ? 'http://127.0.0.1:5001/analyze' : 'https://purify.pro/ml/analyze', {
-			blocks
-		})
+		const response = await axios.post(IS_DEBUG ? "http://127.0.0.1:5001/analyze" : "https://purify.pro/ml/analyze", {
+			blocks,
+		});
 
 		if (response.data.length > 0) {
-			processText(response.data)
+			processText(response.data);
 		}
 	}
-}
+};
 
 const processText = (items) => {
 	// Find all text nodes in the article. We'll search within
@@ -74,17 +71,17 @@ const processText = (items) => {
 		currentNode = treeWalker.nextNode();
 	}
 
-	const res = []
+	const res = [];
 
 	// Iterate over all text nodes and find matches.
 	allTextNodes
 		.map((el) => {
-			return { el, text: el.textContent.trim().toLocaleLowerCase() };
+			return {el, text: el.textContent.trim().toLocaleLowerCase()};
 		})
-		.forEach(({ text, el }) => {
-			items.forEach(item => {
+		.forEach(({text, el}) => {
+			items.forEach((item) => {
 				if (text === item.block) {
-					item.negative_words.map(word => {
+					item.negative_words.map((word) => {
 						const indices = [];
 
 						let startPos = 0;
@@ -101,20 +98,20 @@ const processText = (items) => {
 							const range = new Range();
 							range.setStart(el, index);
 							range.setEnd(el, index + word.length);
-							res.push(range)
+							res.push(range);
 						});
-					})
+					});
 				}
-			})
+			});
 		});
 
-	processRange(res)
-}
+	processRange(res);
+};
 
 const processRange = (range) => {
 	if (Array.isArray(range)) {
-		range.forEach(r => processRange(r))
-		return
+		range.forEach((r) => processRange(r));
+		return;
 	}
 
 	// TODO
@@ -132,16 +129,14 @@ const processRange = (range) => {
 		const selection = window.getSelection();
 		const r = document.createRange();
 		r.selectNodeContents(container);
-		r.setStart(range.commonAncestorContainer, range.startOffset)
-		r.setEnd(range.commonAncestorContainer, range.endOffset)
+		r.setStart(range.commonAncestorContainer, range.startOffset);
+		r.setEnd(range.commonAncestorContainer, range.endOffset);
 		selection.removeAllRanges();
 		selection.addRange(r);
 
 		const selectionString = selection.toString();
-		if (selectionString)
-			highlight(selection, container);
-
+		if (selectionString) highlight(selection, container);
 	} catch {
-		console.log("ERROR")
+		console.log("ERROR");
 	}
-}
+};

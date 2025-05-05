@@ -1,7 +1,15 @@
 import Toggle from "@pages/popup/components/Toggle/Toggle";
 import React from "react";
 
-const Option = ({disabled, value, onToggle, label, sub}) => {
+interface Props {
+	disabled: boolean;
+	value: boolean;
+	onToggle: React.Dispatch<React.SetStateAction<boolean>>;
+	label: string;
+	sub?: boolean;
+}
+
+const Option = ({disabled, value, onToggle, label, sub}: Props) => {
 	const cursorVariants = {
 		enabled: "cursor-pointer",
 		disabled: "cursor-not-allowed opacity-50",

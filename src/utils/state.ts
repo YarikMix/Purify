@@ -1,4 +1,4 @@
-import {T_AggressionState, T_AppState, T_SimplifyState} from "@src/types";
+import {T_AggressionState, T_AppState, T_SimplifyState} from "@src/utils/types";
 
 export const DEFAULT_AGGRESSION_STATE: T_AggressionState = {
 	aggressionEnabled: false,

@@ -4,11 +4,13 @@ import {toggleFilterText} from "@pages/content/aggression/filter";
 import {toggleReplacementText} from "@pages/content/aggression/replacement";
 import {toggleFilterImages} from "@pages/content/aggression/images";
 
-import {T_AppState} from "@src/types";
+import {T_AppState} from "@src/utils/types";
 import {toggleSimplifyTextHotkey} from "@pages/content/simplify/hotkey";
 import {toggleSimplifyTextDynamic} from "@pages/content/simplify/automatic";
 import sendPageStats from "@pages/content/stats";
-import {DEFAULT_APP_STATE} from "@src/state";
+import {DEFAULT_APP_STATE} from "@src/utils/state";
+
+import {VideoInit} from "./video/index";
 
 try {
 	console.log("content script loaded");
@@ -33,6 +35,9 @@ const clearPageStats = () => {
 const initialize = () => {
 	console.log("initialize");
 
+	VideoInit();
+	return;
+
 	clearPageStats();
 	sendPageStats();
 
@@ -40,16 +45,9 @@ const initialize = () => {
 		console.log("state", state);
 
 		if (state.aggressionEnabled) {
-			state.aggressionFilterText &&
-				toggleFilterText(state.aggressionFilterText);
-			state.aggressionReplacementText &&
-				toggleReplacementText(
-					state.aggressionReplacementText,
-				);
-			state.aggressionFilterImages &&
-				toggleFilterImages(
-					state.aggressionFilterImages,
-				);
+			state.aggressionFilterText && toggleFilterText(state.aggressionFilterText);
+			state.aggressionReplacementText && toggleReplacementText(state.aggressionReplacementText);
+			state.aggressionFilterImages && toggleFilterImages(state.aggressionFilterImages);
 		}
 
 		if (state.simplifyEnabled) {
@@ -78,9 +76,7 @@ const initialize = () => {
 		}
 
 		if ("aggressionReplacementText" in state) {
-			toggleReplacementText(
-				state.aggressionReplacementText.newValue,
-			);
+			toggleReplacementText(state.aggressionReplacementText.newValue);
 		}
 
 		if ("simplifyEnabled" in state) {
@@ -91,12 +87,8 @@ const initialize = () => {
 		}
 
 		if ("simplifyDynamic" in state) {
-			toggleSimplifyTextDynamic(
-				state.simplifyDynamic.newValue,
-			);
-			toggleSimplifyTextHotkey(
-				!state.simplifyDynamic.newValue,
-			);
+			toggleSimplifyTextDynamic(state.simplifyDynamic.newValue);
+			toggleSimplifyTextHotkey(!state.simplifyDynamic.newValue);
 		}
 	});
 };
