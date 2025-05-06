@@ -10,6 +10,10 @@ export type T_AggressionState = {
 	aggressionReplacementText: boolean;
 	aggressionShowOriginalText: boolean;
 	aggressionStats: T_Stats;
+	aggressionQueue: {
+		sended: number;
+		processed: number;
+	};
 };
 
 export type T_SimplifyState = {
@@ -17,6 +21,10 @@ export type T_SimplifyState = {
 	simplifyDynamic: boolean;
 	simplifyProcessing: boolean;
 	simplifyStats: T_Stats;
+	simplifyQueue: {
+		sended: number;
+		processed: number;
+	};
 };
 
 export type T_AppState = T_AggressionState & T_SimplifyState;

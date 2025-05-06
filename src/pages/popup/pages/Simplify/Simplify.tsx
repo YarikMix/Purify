@@ -1,37 +1,17 @@
 import Toggle from "@pages/popup/components/Toggle/Toggle";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef} from "react";
 import KeyboardTooltip from "@pages/popup/components/KeyboardTooltip/KeyboardTooltip";
 import InfoBlockSimplify from "@pages/popup/components/InfoBlockSimplify/InfoBlockSimplify";
-import {T_SimplifyState, T_Stats} from "@src/utils/types";
 import {animated, useSpring} from "react-spring";
-import {DEFAULT_SIMPLIFY_STATE} from "@src/utils/state";
 import {Dropdown} from "@pages/popup/components/Dropdown/Dropdown";
+import {useAppState} from "@pages/hooks/useAppState";
+import {Line} from "rc-progress";
 
 export const Simplify = () => {
-	const [state, setState] = useState<T_SimplifyState>(null);
-
-	const [stats, setStats] = useState<T_Stats>(null);
-
-	useEffect(() => {
-		chrome.storage.sync.get<T_SimplifyState>(DEFAULT_SIMPLIFY_STATE, (state) => {
-			setState(state);
-			setStats(state.simplifyStats);
-		});
-
-		chrome.storage.onChanged.addListener((updatedState) => {
-			if ("simplifyStats" in updatedState) {
-				setStats(updatedState.simplifyStats.newValue);
-			}
-		});
-	}, []);
+	const [state, setState] = useAppState();
 
 	const handleToggleSimplifyEnabled = () => {
-		chrome.storage.sync.set({
-			simplifyEnabled: !state.simplifyEnabled,
-		});
-
 		setState({
-			...state,
 			simplifyEnabled: !state.simplifyEnabled,
 		});
 	};
@@ -82,11 +62,27 @@ export const Simplify = () => {
 					)}
 				</animated.nav>
 			</div>
-			{state.simplifyEnabled && stats && stats.wordsReplaced > 0 && stats.wordsAnalyzed > 0 && (
-				<div className="flex w-full justify-center">
-					<InfoBlockSimplify replaced={stats.wordsReplaced} total={stats.wordsAnalyzed} />
-				</div>
-			)}
+			<div className="flex flex-col gap-4">
+				{state.simplifyEnabled &&
+					state.simplifyStats.wordsReplaced > 0 &&
+					state.simplifyStats.wordsAnalyzed > 0 && (
+						<div className="flex w-full justify-center">
+							<InfoBlockSimplify
+								replaced={state.simplifyStats.wordsReplaced}
+								total={state.simplifyStats.wordsAnalyzed}
+							/>
+						</div>
+					)}
+				{state.simplifyEnabled && state.simplifyDynamic && (
+					<div className="flex flex-col gap-2">
+						<h3 className="text-stone-900 text-base">Обработка текста на сайте</h3>
+						<Line
+							percent={100 * (state.simplifyQueue.processed / state.simplifyQueue.sended)}
+							strokeColor={"#2b7fff"}
+						/>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 };

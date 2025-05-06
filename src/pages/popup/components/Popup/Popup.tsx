@@ -30,7 +30,7 @@ export default function Popup() {
 					<NavItem path="/stats" label="Статистика" icon={<IoIosStats fontSize={16} />} />
 					<NavItem path="/aggression" label="Агрессия" icon={<FaAngry fontSize={16} />} />
 					<NavItem path="/simplify" label="Упрощение" icon={<BsFeather fontSize={16} />} />
-					<NavItem path="/video" label="Видео" icon={<FaVideo fontSize={16} />} />
+					{/*<NavItem path="/video" label="Видео" icon={<FaVideo fontSize={16} />} />*/}
 				</div>
 			</header>
 			<div className="text-slate-500 p-4 grow">

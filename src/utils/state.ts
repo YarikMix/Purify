@@ -10,6 +10,10 @@ export const DEFAULT_AGGRESSION_STATE: T_AggressionState = {
 		wordsReplaced: 0,
 		wordsAnalyzed: 0,
 	},
+	aggressionQueue: {
+		sended: 0,
+		processed: 0,
+	},
 };
 
 export const DEFAULT_SIMPLIFY_STATE: T_SimplifyState = {
@@ -19,6 +23,10 @@ export const DEFAULT_SIMPLIFY_STATE: T_SimplifyState = {
 	simplifyStats: {
 		wordsReplaced: 0,
 		wordsAnalyzed: 0,
+	},
+	simplifyQueue: {
+		sended: 0,
+		processed: 0,
 	},
 };
 

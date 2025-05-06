@@ -1,9 +1,10 @@
 import {throttle} from "throttle-debounce";
-import {getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
+import {getScrolledElems, isVisibleInViewport, updateAppState} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/replacement/highlitght";
-import {T_AggressionState, T_AppState} from "@src/utils/types";
 import {API_URL, BLACK_LIST} from "@src/utils/consts";
+import {T_AppState} from "@src/utils/types";
+import {DEFAULT_AGGRESSION_STATE} from "@src/utils/state";
 
 const throttled = throttle(100, () => {
 	replaceAggression();
@@ -86,6 +87,15 @@ export const replaceAggression = async () => {
 	}
 
 	if (blocks.length > 0) {
+		chrome.storage.sync.get(DEFAULT_AGGRESSION_STATE, (state) => {
+			updateAppState({
+				aggressionQueue: {
+					sended: (state.aggressionQueue.sended || 0) + blocks.length,
+					processed: state.aggressionQueue.processed || 0,
+				},
+			});
+		});
+
 		const response = await axios.post(API_URL + "/replace", {
 			blocks,
 			preconception: true,
@@ -95,10 +105,14 @@ export const replaceAggression = async () => {
 		console.log(response.data);
 
 		if (response.data.blocks.length > 0) {
-			chrome.storage.sync.get<T_AggressionState>(["aggressionShowOriginalText"], (state) => {
-				processText(response.data.blocks, state.aggressionShowOriginalText);
+			processText(response.data.blocks);
 
-				chrome.storage.sync.set<T_AppState>({
+			chrome.storage.sync.get(DEFAULT_AGGRESSION_STATE, (state) => {
+				updateAppState({
+					aggressionQueue: {
+						sended: state.aggressionQueue.sended || 0,
+						processed: (state.aggressionQueue.processed || 0) + blocks.length,
+					},
 					aggressionStats: {
 						wordsReplaced: aggressionWordsCount,
 						wordsAnalyzed: totalWordsCount,
@@ -109,7 +123,7 @@ export const replaceAggression = async () => {
 	}
 };
 
-const processText = (items, showTooltip: boolean) => {
+const processText = (items) => {
 	console.log("processText");
 	console.log("items", items);
 
@@ -188,7 +202,7 @@ const processText = (items, showTooltip: boolean) => {
 			const color = getCurrentColor();
 
 			const selectionString = selection.toString();
-			if (selectionString) highlight(data.from, data.to, container, selection, color.color, color.textColor, showTooltip);
+			if (selectionString) highlight(data.from, data.to, container, selection, color.color, color.textColor);
 		} catch {
 			console.log("ERROR");
 		}

@@ -10,15 +10,13 @@ import {toggleSimplifyTextDynamic} from "@pages/content/simplify/automatic";
 import sendPageStats from "@pages/content/stats";
 import {DEFAULT_APP_STATE} from "@src/utils/state";
 
-import {VideoInit} from "./video/index";
-
 try {
 	console.log("content script loaded");
 } catch (e) {
 	console.error(e);
 }
 
-const clearPageStats = () => {
+const resetPageState = () => {
 	chrome.storage.sync.set<T_AppState>({
 		aggressionStats: {
 			wordsReplaced: 0,
@@ -28,6 +26,14 @@ const clearPageStats = () => {
 			wordsReplaced: 0,
 			wordsAnalyzed: 0,
 		},
+		aggressionQueue: {
+			sended: 0,
+			processed: 0,
+		},
+		simplifyQueue: {
+			sended: 0,
+			processed: 0,
+		},
 		simplifyProcessing: false,
 	});
 };
@@ -35,15 +41,13 @@ const clearPageStats = () => {
 const initialize = () => {
 	console.log("initialize");
 
-	VideoInit();
-	return;
+	// VideoInit();
+	// return;
 
-	clearPageStats();
+	resetPageState();
 	sendPageStats();
 
 	chrome.storage.sync.get<T_AppState>(DEFAULT_APP_STATE, (state) => {
-		console.log("state", state);
-
 		if (state.aggressionEnabled) {
 			state.aggressionFilterText && toggleFilterText(state.aggressionFilterText);
 			state.aggressionReplacementText && toggleReplacementText(state.aggressionReplacementText);
@@ -60,14 +64,17 @@ const initialize = () => {
 	});
 
 	chrome.storage.onChanged.addListener((state) => {
-		console.log("chrome.storage.onChanged");
-		console.log("state", state);
-
 		if ("aggressionEnabled" in state) {
 			if (!state.aggressionEnabled.newValue) {
 				toggleFilterText(false);
 				toggleReplacementText(false);
 				toggleFilterImages(false);
+			} else {
+				chrome.storage.sync.set({
+					simplifyEnabled: false,
+					simplifyDynamic: false,
+					simplifyProcessing: false,
+				});
 			}
 		}
 
@@ -83,6 +90,13 @@ const initialize = () => {
 			if (!state.simplifyEnabled.newValue) {
 				toggleSimplifyTextDynamic(false);
 				toggleSimplifyTextHotkey(false);
+			} else {
+				chrome.storage.sync.set({
+					aggressionEnabled: false,
+					aggressionFilterText: false,
+					aggressionReplacementText: false,
+					aggressionShowOriginalText: false,
+				});
 			}
 		}
 
@@ -104,3 +118,5 @@ if (document.readyState !== "complete") {
 		initialize();
 	}, 550);
 }
+
+// initialize();

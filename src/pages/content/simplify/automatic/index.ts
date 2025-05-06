@@ -1,9 +1,10 @@
 import {throttle} from "throttle-debounce";
-import {getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
+import {getScrolledElems, isVisibleInViewport, updateAppState} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/replacement/highlitght";
 import {T_AppState, T_SimplifyState} from "@src/utils/types";
 import {API_URL} from "@src/utils/consts";
+import {DEFAULT_APP_STATE} from "@src/utils/state";
 
 const throttled = throttle(100, () => {
 	analyzePage();
@@ -86,6 +87,17 @@ export const analyzePage = async (minWordsCount = 5) => {
 	console.log("blocks", blocks);
 
 	if (blocks.length > 0) {
+		chrome.storage.sync.get(DEFAULT_APP_STATE, (state) => {
+			console.log("state", state);
+
+			updateAppState({
+				simplifyQueue: {
+					...state.simplifyQueue,
+					sended: state.simplifyQueue.sended + blocks.length,
+				},
+			});
+		});
+
 		const response = await axios.post(API_URL + "/simplify", {
 			blocks,
 		});
@@ -93,14 +105,18 @@ export const analyzePage = async (minWordsCount = 5) => {
 		console.log(response.data);
 
 		if (response.data.result.length > 0) {
-			chrome.storage.sync.get<T_SimplifyState>(["simplifyDynamic"], (state) => {
+			chrome.storage.sync.get(DEFAULT_APP_STATE, (state) => {
 				console.log("state", state);
 				processText(response.data.result.filter((item) => item.from && item.to));
 
-				chrome.storage.sync.set<T_AppState>({
+				updateAppState({
 					simplifyStats: {
 						wordsReplaced,
 						wordsAnalyzed,
+					},
+					simplifyQueue: {
+						...state.simplifyQueue,
+						processed: state.simplifyQueue.processed + blocks.length,
 					},
 				});
 			});

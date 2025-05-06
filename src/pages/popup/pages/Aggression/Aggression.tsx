@@ -6,62 +6,23 @@ import InfoBlockAggressive from "@pages/popup/components/InfoBlockAggressive/Inf
 import {T_AggressionState, T_Stats} from "@src/utils/types";
 import {animated, useSpring} from "react-spring";
 import {AGGRESSIVE_THRESHOLD} from "@src/utils/consts";
+import {useAppState} from "@pages/hooks/useAppState";
+import {Circle, Line} from "rc-progress";
 
 const Aggression = () => {
-	const [state, setState] = useState<T_AggressionState>(null);
-
-	const [stats, setStats] = useState<T_Stats>(null);
-
-	useEffect(() => {
-		chrome.storage.sync.get<T_AggressionState>(
-			[
-				"aggressionEnabled",
-				"aggressionFilterText",
-				"aggressionFilterImages",
-				"aggressionReplacementText",
-				"aggressionShowOriginalText",
-				"aggressionStats",
-			],
-			(state) => {
-				setState(state);
-				setStats(state.aggressionStats);
-			},
-		);
-
-		chrome.storage.onChanged.addListener((updatedState) => {
-			if ("aggressionStats" in updatedState) {
-				setStats(updatedState.aggressionStats.newValue);
-			}
-		});
-	}, []);
+	const [state, setState] = useAppState();
 
 	const handleToggleAggressionEnabled = () => {
-		chrome.storage.sync.set({
-			aggressionEnabled: !state.aggressionEnabled,
-			aggressionFilterText: !state.aggressionEnabled,
-			aggressionReplacementText: false,
-			aggressionShowOriginalText: false,
-		});
-
 		setState({
-			...state,
 			aggressionEnabled: !state.aggressionEnabled,
 			aggressionFilterText: !state.aggressionEnabled,
 			aggressionReplacementText: false,
 			aggressionShowOriginalText: false,
-			aggressionFilterImages: false,
 		});
 	};
 
 	const handleToggleFilterText = () => {
-		chrome.storage.sync.set({
-			aggressionFilterText: !state.aggressionFilterText,
-			aggressionReplacementText: false,
-			aggressionShowOriginalText: false,
-		});
-
 		setState({
-			...state,
 			aggressionFilterText: !state.aggressionFilterText,
 			aggressionReplacementText: false,
 			aggressionShowOriginalText: false,
@@ -75,14 +36,7 @@ const Aggression = () => {
 			aggressionShowOriginalTextNewValue = false;
 		}
 
-		chrome.storage.sync.set<T_AggressionState>({
-			aggressionFilterText: false,
-			aggressionReplacementText: !state.aggressionReplacementText,
-			aggressionShowOriginalText: aggressionShowOriginalTextNewValue,
-		});
-
 		setState({
-			...state,
 			aggressionFilterText: false,
 			aggressionReplacementText: !state.aggressionReplacementText,
 			aggressionShowOriginalText: aggressionShowOriginalTextNewValue,
@@ -90,23 +44,13 @@ const Aggression = () => {
 	};
 
 	const handleToggleShowOriginalText = () => {
-		chrome.storage.sync.set({
-			aggressionShowOriginalText: !state.aggressionShowOriginalText,
-		});
-
 		setState({
-			...state,
 			aggressionShowOriginalText: !state.aggressionShowOriginalText,
 		});
 	};
 
 	const handleToggleFilterImages = () => {
-		chrome.storage.sync.set({
-			aggressionFilterImages: !state.aggressionFilterImages,
-		});
-
 		setState({
-			...state,
 			aggressionFilterImages: !state.aggressionFilterImages,
 		});
 	};
@@ -160,14 +104,13 @@ const Aggression = () => {
 					/>
 				</animated.nav>
 			</div>
-			{state.aggressionEnabled && stats && stats.wordsReplaced > 0 && stats.wordsAnalyzed > 0 && (
-				<div className="flex flex-col gap-4 items-center">
-					<SiteSecurityInfo
-						aggressive={
-							Math.round(stats.wordsReplaced * 1.5) / stats.wordsAnalyzed > AGGRESSIVE_THRESHOLD
-						}
+			{state.aggressionEnabled && state.aggressionReplacementText && (
+				<div className="flex flex-col gap-2">
+					<h3 className="text-stone-900 text-base">Обработка текста на сайте</h3>
+					<Line
+						percent={100 * (state.aggressionQueue.processed / state.aggressionQueue.sended)}
+						strokeColor={"#2b7fff"}
 					/>
-					<InfoBlockAggressive replaced={Math.round(stats.wordsReplaced * 1.5)} total={stats.wordsAnalyzed} />
 				</div>
 			)}
 		</div>

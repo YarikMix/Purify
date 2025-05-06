@@ -3,8 +3,12 @@ import React, {useState} from "react";
 import axios from "axios";
 import {API_URL} from "@src/utils/consts";
 import SiteInfoSummary from "@pages/popup/components/SiteInfoSummary/SiteInfoSummary";
+import InfoBlockAggressive from "@pages/popup/components/InfoBlockAggressive/InfoBlockAggressive";
+import {useAppState} from "@pages/hooks/useAppState";
 
 const Stats = () => {
+	const [state] = useAppState();
+
 	const siteDomen = useSiteDomen();
 
 	const [stats, setStats] = useState<{
@@ -14,27 +18,6 @@ const Stats = () => {
 		bias_percent: number;
 		resume: boolean;
 	}>();
-
-	// const urls: Record<string, Record<string, number>> = {
-	// 	"2ch.hk": {
-	// 		aggressivePercentage: 47,
-	// 		agitationPercentage: 13,
-	// 		obsceneLanguagePercentage: 17,
-	// 		biasPercentage: 3,
-	// 	},
-	// 	"www.cbr.ru": {
-	// 		aggressivePercentage: 228,
-	// 		agitationPercentage: 228,
-	// 		obsceneLanguagePercentage: 228,
-	// 		biasPercentage: 228,
-	// 	},
-	// 	"www.woman.ru/": {
-	// 		aggressivePercentage: 322,
-	// 		agitationPercentage: 322,
-	// 		obsceneLanguagePercentage: 322,
-	// 		biasPercentage: 322,
-	// 	},
-	// };
 
 	const handleEstimateSiteBtnClick = async (e: React.MouseEvent<HTMLElement>) => {
 		e.preventDefault();
@@ -52,7 +35,9 @@ const Stats = () => {
 		});
 	};
 
-	console.log("stats", stats);
+	if (!state) {
+		return;
+	}
 
 	return (
 		<div className="flex flex-col justify-between items-center gap-8 w-full h-full">
@@ -66,7 +51,20 @@ const Stats = () => {
 					Оценить сайт на безопасность
 				</button>
 			</div>
-			{stats && <SiteInfoSummary site={siteDomen} aggressive={!stats.resume} {...stats} />}
+			{state.aggressionEnabled && state.aggressionStats.wordsReplaced > 0 && state.aggressionStats.wordsAnalyzed > 0 && (
+				<div className="flex flex-col gap-4 items-center">
+					{/*<SiteSecurityInfo*/}
+					{/*	aggressive={*/}
+					{/*		Math.round(stats2.wordsReplaced * 1.5) / stats2.wordsAnalyzed > AGGRESSIVE_THRESHOLD*/}
+					{/*	}*/}
+					{/*/>*/}
+					<InfoBlockAggressive
+						replaced={Math.round(state.aggressionStats.wordsReplaced)}
+						total={state.aggressionStats.wordsAnalyzed}
+					/>
+				</div>
+			)}
+			{stats && <SiteInfoSummary site={siteDomen} aggressive={!stats.resume} {...state.aggressionStats} />}
 			{/*<SiteInfoSummary site={siteDomen} aggressive={false} aggressivePercentage={2} agitationPercentage={5} obsceneLanguagePercentage={1} biasPercentage={2} />*/}
 		</div>
 	);

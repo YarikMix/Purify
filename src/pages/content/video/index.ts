@@ -18,9 +18,36 @@ function addVideo(video: HTMLVideoElement) {
 
 		console.log("video.currentSrc", video.currentSrc);
 
-		console.log("asdfasdfasdf");
-		// video.pause();
-		// video.removeAttribute("autoplay");
+		video.pause();
+		video.removeAttribute("autoplay");
+
+		if (document.querySelector(".html5-video-player")) {
+			document.querySelector<HTMLElement>(".html5-video-player").style.pointerEvents = " none";
+			document.querySelector<HTMLElement>(".html5-video-player").style.display = "none";
+		}
+
+		setTimeout(() => {
+			console.log("asdfasdfasd123");
+			const parent = document.querySelector<HTMLElement>("ytd-player");
+
+			if (parent) {
+				console.log("parent", parent);
+				console.log("parent.children", parent.children);
+				parent.style.position = "relative";
+
+				const loader = document.createElement("div");
+				loader.style.background = "red";
+				loader.style.width = "100%";
+				loader.style.height = "100%";
+				loader.style.position = "absolute";
+				loader.style.top = "0";
+				loader.style.right = "0";
+
+				parent.appendChild(loader);
+				console.log("parent.children", parent.children);
+			}
+		}, 250);
+
 		// video.removeAttribute("src");
 
 		// console.log('innerHTML = ""');
@@ -78,6 +105,8 @@ function removeVideo(video: HTMLVideoElement) {
 }
 
 export const VideoInit = () => {
+	console.log("VideoInit");
+
 	const videos = document.getElementsByTagName("video");
 	for (const video of videos) {
 		addVideo(video);
