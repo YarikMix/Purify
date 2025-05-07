@@ -31,6 +31,7 @@ export const DEFAULT_SIMPLIFY_STATE: T_SimplifyState = {
 };
 
 export const DEFAULT_APP_STATE: T_AppState = {
+	ignoreList: [],
 	...DEFAULT_AGGRESSION_STATE,
 	...DEFAULT_SIMPLIFY_STATE,
 };

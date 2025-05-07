@@ -10,9 +10,21 @@ import {BsFeather} from "react-icons/bs";
 import {IoIosStats, IoMdSettings} from "react-icons/io";
 import Settings from "@pages/popup/pages/Settings/Settings";
 import Video from "@pages/popup/pages/Video/Video";
+import {useAppState} from "@pages/hooks/useAppState";
+import {useSiteDomen} from "@pages/hooks/useSiteDomen";
 
 export default function Popup() {
 	const navigate = useNavigate();
+
+	const [state] = useAppState();
+
+	const siteDomen = useSiteDomen();
+
+	if (!state) {
+		return null;
+	}
+
+	const isDomenIgnored = state.ignoreList.includes(siteDomen);
 
 	return (
 		<div className="absolute top-0 left-0 right-0 bottom-0 text-center h-full bg-sky-50 flex flex-col min-h-screen">
@@ -27,20 +39,35 @@ export default function Popup() {
 					</button>
 				</div>
 				<div className="flex justify-between">
-					<NavItem path="/stats" label="Статистика" icon={<IoIosStats fontSize={16} />} />
-					<NavItem path="/aggression" label="Агрессия" icon={<FaAngry fontSize={16} />} />
-					<NavItem path="/simplify" label="Упрощение" icon={<BsFeather fontSize={16} />} />
-					{/*<NavItem path="/video" label="Видео" icon={<FaVideo fontSize={16} />} />*/}
+					<NavItem
+						path="/stats"
+						label="Статистика"
+						icon={<IoIosStats fontSize={16} />}
+						disabled={isDomenIgnored}
+					/>
+					<NavItem
+						path="/aggression"
+						label="Агрессия"
+						icon={<FaAngry fontSize={16} />}
+						disabled={isDomenIgnored}
+					/>
+					<NavItem
+						path="/simplify"
+						label="Упрощение"
+						icon={<BsFeather fontSize={16} />}
+						disabled={isDomenIgnored}
+					/>
+					{/*<NavItem path="/video" label="Видео" icon={<FaVideo fontSize={16} />} disabled={isDomenIgnored} />*/}
 				</div>
 			</header>
 			<div className="text-slate-500 p-4 grow">
 				<Routes>
 					<Route path="/settings" element={<Settings />} />
-					<Route path="/stats" element={<Stats />} />
-					<Route path="/simplify" element={<Simplify />} />
-					<Route path="/aggression" element={<Aggression />} />
-					<Route path="/video" element={<Video />} />
-					<Route path="/settings" element={<Settings />} />
+					{!isDomenIgnored && <Route path="/stats" element={<Stats />} />}
+					{!isDomenIgnored && <Route path="/simplify" element={<Simplify />} />}
+					{!isDomenIgnored && <Route path="/aggression" element={<Aggression />} />}
+					{!isDomenIgnored && <Route path="/video" element={<Video />} />}
+					{!isDomenIgnored && <Route path="/settings" element={<Settings />} />}
 					<Route path="*" element={<Navigate to="/settings" />} />
 				</Routes>
 			</div>

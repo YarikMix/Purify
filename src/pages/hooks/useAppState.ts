@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
-import {T_AggressionState, T_AppState} from "@src/utils/types";
+import {T_AppState} from "@src/utils/types";
 import {DEFAULT_APP_STATE} from "@src/utils/state";
 
-export const useAppState = () => {
+export const useAppState = (): [T_AppState, (state: Partial<T_AppState>) => void] => {
 	const [localState, setLocalState] = useState<T_AppState>(null);
 
 	const syncState = () => {

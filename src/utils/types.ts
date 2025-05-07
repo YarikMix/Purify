@@ -27,4 +27,7 @@ export type T_SimplifyState = {
 	};
 };
 
-export type T_AppState = T_AggressionState & T_SimplifyState;
+export type T_AppState = {
+	ignoreList: string[];
+} & T_AggressionState &
+	T_SimplifyState;
