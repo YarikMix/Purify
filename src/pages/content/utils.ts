@@ -69,3 +69,5 @@ export const declOfNum = (number: number, titles: string[]) => {
 export const updateAppState = (state: Partial<T_AppState>) => {
 	chrome.storage.sync.set<Partial<T_AppState>>(state);
 };
+
+export const isDomenIgnored = (state: T_AppState) => state.ignoreList.includes(location.hostname);

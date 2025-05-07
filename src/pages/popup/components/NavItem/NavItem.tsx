@@ -9,6 +9,10 @@ type Props = {
 };
 
 const NavItem = ({path, label, icon, disabled = false}: Props) => {
+	const handleClick = (e) => {
+		disabled && e.preventDefault();
+	};
+
 	return (
 		<NavLink
 			to={path}
@@ -18,11 +22,12 @@ const NavItem = ({path, label, icon, disabled = false}: Props) => {
 					"px-2 py-2.5",
 					"hover:bg-cprimary-300 hover:text-csecond-100",
 					"rounded-md transition",
-					"cursor-pointer",
+					disabled ? "cursor-not-allowed" : "cursor-pointer",
 					isActive ? "text-white" : "text-gray-600",
 					isActive && "bg-blue-500",
 				].join(" ")
 			}
+			onClick={handleClick}
 		>
 			{icon}
 			<span>{label}</span>

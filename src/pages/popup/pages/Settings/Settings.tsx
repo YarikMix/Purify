@@ -5,7 +5,7 @@ import {useAppState} from "@pages/hooks/useAppState";
 const Settings = () => {
 	const [state, setState] = useAppState();
 
-	const siteDomen = useSiteDomen();
+	const {siteDomen, isDomenIgnored} = useSiteDomen();
 
 	const toggleIgnoreList = () => {
 		const isDomenIgnored = state.ignoreList.includes(siteDomen);
@@ -20,8 +20,6 @@ const Settings = () => {
 	if (!state) {
 		return null;
 	}
-
-	const isDomenIgnored = state.ignoreList.includes(siteDomen);
 
 	return (
 		<div className="flex flex-col justify-between items-center gap-8 w-full h-full">

@@ -9,7 +9,7 @@ import {useAppState} from "@pages/hooks/useAppState";
 const Stats = () => {
 	const [state] = useAppState();
 
-	const siteDomen = useSiteDomen();
+	const {siteDomen} = useSiteDomen();
 
 	const [stats, setStats] = useState<{
 		aggressive_percent: number;

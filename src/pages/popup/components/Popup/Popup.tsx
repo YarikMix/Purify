@@ -4,7 +4,7 @@ import {Route, Routes, useNavigate, Navigate} from "react-router-dom";
 import Stats from "@pages/popup/pages/Stats/Stats";
 import Aggression from "@pages/popup/pages/Aggression/Aggression";
 import Simplify from "@pages/popup/pages/Simplify/Simplify";
-import {FaAngry, FaVideo} from "react-icons/fa";
+import {FaAngry} from "react-icons/fa";
 import NavItem from "@pages/popup/components/NavItem/NavItem";
 import {BsFeather} from "react-icons/bs";
 import {IoIosStats, IoMdSettings} from "react-icons/io";
@@ -18,13 +18,11 @@ export default function Popup() {
 
 	const [state] = useAppState();
 
-	const siteDomen = useSiteDomen();
+	const {isDomenIgnored} = useSiteDomen();
 
 	if (!state) {
 		return null;
 	}
-
-	const isDomenIgnored = state.ignoreList.includes(siteDomen);
 
 	return (
 		<div className="absolute top-0 left-0 right-0 bottom-0 text-center h-full bg-sky-50 flex flex-col min-h-screen">

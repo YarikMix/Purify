@@ -9,6 +9,7 @@ import {toggleSimplifyTextHotkey} from "@pages/content/simplify/hotkey";
 import {toggleSimplifyTextDynamic} from "@pages/content/simplify/automatic";
 import sendPageStats from "@pages/content/stats";
 import {DEFAULT_APP_STATE} from "@src/utils/state";
+import {isDomenIgnored, updateAppState} from "@pages/content/utils";
 
 try {
 	console.log("content script loaded");
@@ -45,13 +46,18 @@ const initialize = () => {
 	// return;
 
 	resetPageState();
-	sendPageStats();
 
 	chrome.storage.sync.get<T_AppState>(DEFAULT_APP_STATE, (state) => {
+		if (isDomenIgnored(state)) {
+			return;
+		}
+
 		if (state.aggressionEnabled) {
 			state.aggressionFilterText && toggleFilterText(state.aggressionFilterText);
 			state.aggressionReplacementText && toggleReplacementText(state.aggressionReplacementText);
 			state.aggressionFilterImages && toggleFilterImages(state.aggressionFilterImages);
+
+			sendPageStats();
 		}
 
 		if (state.simplifyEnabled) {
@@ -64,6 +70,37 @@ const initialize = () => {
 	});
 
 	chrome.storage.onChanged.addListener((state) => {
+		if ("ignoreList" in state && state.ignoreList.newValue.includes(location.hostname)) {
+			updateAppState({
+				aggressionEnabled: false,
+				aggressionFilterText: false,
+				aggressionReplacementText: false,
+				aggressionFilterImages: false,
+				aggressionShowOriginalText: false,
+				aggressionStats: {
+					wordsReplaced: 0,
+					wordsAnalyzed: 0,
+				},
+				aggressionQueue: {
+					sended: 0,
+					processed: 0,
+				},
+				simplifyEnabled: false,
+				simplifyDynamic: false,
+				simplifyProcessing: false,
+				simplifyStats: {
+					wordsReplaced: 0,
+					wordsAnalyzed: 0,
+				},
+				simplifyQueue: {
+					sended: 0,
+					processed: 0,
+				},
+			});
+
+			return;
+		}
+
 		if ("aggressionEnabled" in state) {
 			if (!state.aggressionEnabled.newValue) {
 				toggleFilterText(false);
