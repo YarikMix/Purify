@@ -31,7 +31,7 @@
       },
       {
         "id": "2",
-        "enabled": true,
+        "enabled": false,
         "path": "rules_prod.json"
       }
     ]
@@ -45,9 +45,6 @@
       ],
       "js": [
         "src/pages/content/index.tsx"
-      ],
-      "css": [
-        "contentStyle.css"
       ]
     }
   ],
@@ -55,7 +52,6 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "contentStyle.css",
         "icon-128.png",
         "icon-32.png"
       ],

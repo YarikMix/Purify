@@ -10,6 +10,7 @@ import {toggleSimplifyTextDynamic} from "@pages/content/simplify/automatic";
 import sendPageStats from "@pages/content/stats";
 import {DEFAULT_APP_STATE} from "@src/utils/state";
 import {isDomenIgnored, updateAppState} from "@pages/content/utils";
+import {ToggleAnalyzeVideo} from "@pages/content/video";
 
 try {
 	console.log("content script loaded");
@@ -42,9 +43,6 @@ const resetPageState = () => {
 const initialize = () => {
 	console.log("initialize");
 
-	// VideoInit();
-	// return;
-
 	resetPageState();
 
 	chrome.storage.sync.get<T_AppState>(DEFAULT_APP_STATE, (state) => {
@@ -66,6 +64,10 @@ const initialize = () => {
 			} else {
 				toggleSimplifyTextHotkey(true);
 			}
+		}
+
+		if (state.videoEnabled) {
+			ToggleAnalyzeVideo(state.videoEnabled);
 		}
 	});
 
@@ -96,6 +98,7 @@ const initialize = () => {
 					sended: 0,
 					processed: 0,
 				},
+				videoEnabled: false,
 			});
 
 			return;
@@ -144,16 +147,16 @@ const initialize = () => {
 	});
 };
 
-if (document.readyState !== "complete") {
-	window.addEventListener("load", () => {
-		setTimeout(() => {
-			initialize();
-		}, 250);
-	});
-} else {
-	setTimeout(() => {
-		initialize();
-	}, 550);
-}
+// if (document.readyState !== "complete") {
+// 	window.addEventListener("load", () => {
+// 		setTimeout(() => {
+// 			initialize();
+// 		}, 250);
+// 	});
+// } else {
+// 	setTimeout(() => {
+// 		initialize();
+// 	}, 550);
+// }
 
-// initialize();
+initialize();

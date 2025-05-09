@@ -1,5 +1,5 @@
 import axios from "axios";
-import {API_URL, BLACK_LIST} from "@src/utils/consts";
+import {API_URL, BLACK_LIST_WORDS} from "@src/utils/consts";
 
 const analyzedBlocks: string[] = [];
 
@@ -13,7 +13,7 @@ const sendPageStats = async () => {
 		if (currentNode?.textContent) {
 			const text = currentNode.textContent.trim();
 			const words = text.split(/\s+/);
-			if (text.length > 0 && !BLACK_LIST.some((token) => text.includes(token)) && words.length >= minWordsCount) {
+			if (text.length > 0 && !BLACK_LIST_WORDS.some((token) => text.includes(token)) && words.length >= minWordsCount) {
 				blocks.push(text);
 				analyzedBlocks.push(text);
 			}

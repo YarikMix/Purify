@@ -2,8 +2,7 @@ import {throttle} from "throttle-debounce";
 import {getScrolledElems, isVisibleInViewport, updateAppState} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/replacement/highlitght";
-import {API_URL, BLACK_LIST} from "@src/utils/consts";
-import {T_AppState} from "@src/utils/types";
+import {API_URL, BLACK_LIST_WORDS} from "@src/utils/consts";
 import {DEFAULT_AGGRESSION_STATE} from "@src/utils/state";
 
 const throttled = throttle(100, () => {
@@ -74,7 +73,7 @@ export const replaceAggression = async () => {
 				const words = text.split(/\s+/);
 				if (
 					text.length > 0 &&
-					!BLACK_LIST.some((token) => text.includes(token)) &&
+					!BLACK_LIST_WORDS.some((token) => text.includes(token)) &&
 					words.length >= minWordsCount &&
 					!analyzedBlocks.includes(text)
 				) {

@@ -1,6 +1,6 @@
 import $ from "jquery";
 import {HIGHLIGHT_CLASS} from "@pages/content/highlight/constants";
-import {T_AggressionState, T_AppState} from "@src/utils/types";
+import {T_AggressionState} from "@src/utils/types";
 
 const showTooltip = (highlightId: string) => {
 	const highlightEl = document.querySelector<HTMLElement>(`highlighter-span[data-highlight-id='${highlightId}']`);

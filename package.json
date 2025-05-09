@@ -13,7 +13,9 @@
     "build:firefox": "vite build --config vite.config.firefox.ts",
     "dev": "nodemon --config nodemon.chrome.json",
     "dev:chrome": "nodemon --config nodemon.chrome.json",
-    "dev:firefox": "nodemon --config nodemon.firefox.json"
+    "dev:firefox": "nodemon --config nodemon.firefox.json",
+    "zip:windows": "tar.exe -a -c -f out.zip dist_chrome",
+    "zip:macos": "todo"
   },
   "type": "module",
   "dependencies": {

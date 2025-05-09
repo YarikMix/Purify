@@ -27,7 +27,12 @@ export type T_SimplifyState = {
 	};
 };
 
+export type T_VideoState = {
+	videoEnabled: boolean;
+};
+
 export type T_AppState = {
 	ignoreList: string[];
 } & T_AggressionState &
-	T_SimplifyState;
+	T_SimplifyState &
+	T_VideoState;

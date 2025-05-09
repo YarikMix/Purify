@@ -2,8 +2,7 @@ import {throttle} from "throttle-debounce";
 import {getScrolledElems, isVisibleInViewport, updateAppState} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/replacement/highlitght";
-import {T_AppState, T_SimplifyState} from "@src/utils/types";
-import {API_URL} from "@src/utils/consts";
+import {API_URL, BLACK_LIST_WORDS} from "@src/utils/consts";
 import {DEFAULT_APP_STATE} from "@src/utils/state";
 
 const throttled = throttle(100, () => {
@@ -57,22 +56,9 @@ export const analyzePage = async (minWordsCount = 5) => {
 		if (currentNode?.textContent) {
 			const text = currentNode.textContent.trim();
 			const words = text.split(/\s+/);
-			const blackList = [
-				"function",
-				"window",
-				"document",
-				"innerHTML",
-				"self",
-				"<div",
-				"<a",
-				"<img",
-				"display:",
-				"font-size:",
-				"position:",
-			];
 			if (
 				text.length > 0 &&
-				!blackList.some((token) => text.includes(token)) &&
+				!BLACK_LIST_WORDS.some((token) => text.includes(token)) &&
 				!analyzedBlocks.includes(text) &&
 				words.length >= minWordsCount
 			) {

@@ -12,6 +12,7 @@ import Settings from "@pages/popup/pages/Settings/Settings";
 import Video from "@pages/popup/pages/Video/Video";
 import {useAppState} from "@pages/hooks/useAppState";
 import {useSiteDomen} from "@pages/hooks/useSiteDomen";
+import {FaVideo} from "react-icons/fa6";
 
 export default function Popup() {
 	const navigate = useNavigate();
@@ -55,7 +56,7 @@ export default function Popup() {
 						icon={<BsFeather fontSize={16} />}
 						disabled={isDomenIgnored}
 					/>
-					{/*<NavItem path="/video" label="Видео" icon={<FaVideo fontSize={16} />} disabled={isDomenIgnored} />*/}
+					<NavItem path="/video" label="Видео" icon={<FaVideo fontSize={16} />} disabled={isDomenIgnored} />
 				</div>
 			</header>
 			<div className="text-slate-500 p-4 grow">
