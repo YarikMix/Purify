@@ -30,8 +30,14 @@ jobs:
       - name: Upload build result
         uses: actions/upload-artifact@v4
         with:
-          name: build
+          name: build folder
           path: ./dist_chrome
+
+      - name: Upload build result2
+        uses: actions/upload-artifact@v4
+        with:
+          name: build archive
+          path: ./dist_chrome.zip
 
       - name: Clear server dist folder
         uses: appleboy/ssh-action@master
@@ -48,7 +54,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "dist_chrome.zip"
+          source: "./dist_chrome.zip"
           target: "/opt/ext/"
           strip_components: 1
           overwrite: true
