@@ -58,4 +58,3 @@ jobs:
           target: "/opt/ext/"
           strip_components: 1
           overwrite: true
-          sudo: true
