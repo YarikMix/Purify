@@ -1,6 +1,6 @@
-import {useSiteDomen} from "@pages/hooks/useSiteDomen";
+import {useSiteDomen} from "@pages/popup/hooks/useSiteDomen";
 import React from "react";
-import {useAppState} from "@pages/hooks/useAppState";
+import useAppState from "@pages/popup/hooks/useAppState";
 
 const Settings = () => {
 	const [state, setState] = useAppState();

@@ -1,6 +1,6 @@
 import Toggle from "@pages/popup/components/Toggle/Toggle";
 import React from "react";
-import {useAppState} from "@pages/hooks/useAppState";
+import useAppState from "@pages/popup/hooks/useAppState";
 
 const Video = () => {
 	const [state, setState] = useAppState();

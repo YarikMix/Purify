@@ -142,7 +142,7 @@ const analyzeVideo = async (video: HTMLVideoElement) => {
 	}
 };
 
-export const ToggleAnalyzeVideo = (enabled: boolean) => {
+export const toggleAnalyzeVideo = (enabled: boolean) => {
 	console.log("ToggleAnalyzeVideo");
 
 	if (enabled) {

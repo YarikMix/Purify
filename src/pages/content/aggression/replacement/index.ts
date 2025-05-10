@@ -99,9 +99,8 @@ export const replaceAggression = async () => {
 			blocks,
 			preconception: true,
 			agitation: true,
+			site: location.hostname,
 		});
-
-		console.log(response.data);
 
 		if (response.data.blocks.length > 0) {
 			processText(response.data.blocks);

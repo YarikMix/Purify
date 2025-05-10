@@ -1,5 +1,5 @@
 import styles from "./SiteSecurityInfo.module.css";
-import {useSiteDomen} from "@pages/hooks/useSiteDomen";
+import {useSiteDomen} from "@pages/popup/hooks/useSiteDomen";
 import clsx from "clsx";
 
 const SiteSecurityInfo = ({aggressive}) => {

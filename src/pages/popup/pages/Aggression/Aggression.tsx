@@ -1,13 +1,9 @@
 import Toggle from "@pages/popup/components/Toggle/Toggle";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef} from "react";
 import Option from "@pages/popup/components/Option/Option";
-import SiteSecurityInfo from "@pages/popup/components/SiteSecurityInfo/SiteSecurityInfo";
-import InfoBlockAggressive from "@pages/popup/components/InfoBlockAggressive/InfoBlockAggressive";
-import {T_AggressionState, T_Stats} from "@src/utils/types";
 import {animated, useSpring} from "react-spring";
-import {AGGRESSIVE_THRESHOLD} from "@src/utils/consts";
-import {useAppState} from "@pages/hooks/useAppState";
-import {Circle, Line} from "rc-progress";
+import useAppState from "@pages/popup/hooks/useAppState";
+import ProgressBar from "@pages/popup/components/ProgressBar/ProgressBar";
 
 const Aggression = () => {
 	const [state, setState] = useAppState();
@@ -105,13 +101,11 @@ const Aggression = () => {
 				</animated.nav>
 			</div>
 			{state.aggressionEnabled && state.aggressionReplacementText && (
-				<div className="flex flex-col gap-2">
-					<h3 className="text-stone-900 text-base">Обработка текста на сайте</h3>
-					<Line
-						percent={100 * (state.aggressionQueue.processed / state.aggressionQueue.sended)}
-						strokeColor={"#2b7fff"}
-					/>
-				</div>
+				<ProgressBar
+					currentValue={state.aggressionQueue.processed}
+					maxValue={state.aggressionQueue.sended}
+					label="Обработка текста на сайте"
+				/>
 			)}
 		</div>
 	);

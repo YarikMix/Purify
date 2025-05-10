@@ -10,8 +10,8 @@ import {BsFeather} from "react-icons/bs";
 import {IoIosStats, IoMdSettings} from "react-icons/io";
 import Settings from "@pages/popup/pages/Settings/Settings";
 import Video from "@pages/popup/pages/Video/Video";
-import {useAppState} from "@pages/hooks/useAppState";
-import {useSiteDomen} from "@pages/hooks/useSiteDomen";
+import useAppState from "@pages/popup/hooks/useAppState";
+import {useSiteDomen} from "@pages/popup/hooks/useSiteDomen";
 import {FaVideo} from "react-icons/fa6";
 
 export default function Popup() {

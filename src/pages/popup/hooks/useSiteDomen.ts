@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {useAppState} from "@pages/hooks/useAppState";
+import useAppState from "@pages/popup/hooks/useAppState";
 
 type Return_Type = {
 	siteDomen: string;

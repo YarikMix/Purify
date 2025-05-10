@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {T_AppState} from "@src/utils/types";
 import {DEFAULT_APP_STATE} from "@src/utils/state";
 
-export const useAppState = (): [T_AppState, (state: Partial<T_AppState>) => void] => {
+const useAppState = (): [T_AppState, (state: Partial<T_AppState>) => void] => {
 	const [localState, setLocalState] = useState<T_AppState>(null);
 
 	const syncState = () => {
@@ -25,3 +25,5 @@ export const useAppState = (): [T_AppState, (state: Partial<T_AppState>) => void
 
 	return [localState, setGlobalState];
 };
+
+export default useAppState;

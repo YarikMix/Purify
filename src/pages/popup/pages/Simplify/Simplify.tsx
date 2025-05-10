@@ -4,8 +4,8 @@ import KeyboardTooltip from "@pages/popup/components/KeyboardTooltip/KeyboardToo
 import InfoBlockSimplify from "@pages/popup/components/InfoBlockSimplify/InfoBlockSimplify";
 import {animated, useSpring} from "react-spring";
 import {Dropdown} from "@pages/popup/components/Dropdown/Dropdown";
-import {useAppState} from "@pages/hooks/useAppState";
-import {Line} from "rc-progress";
+import ProgressBar from "@pages/popup/components/ProgressBar/ProgressBar";
+import useAppState from "@pages/popup/hooks/useAppState";
 
 export const Simplify = () => {
 	const [state, setState] = useAppState();
@@ -74,13 +74,11 @@ export const Simplify = () => {
 						</div>
 					)}
 				{state.simplifyEnabled && state.simplifyDynamic && (
-					<div className="flex flex-col gap-2">
-						<h3 className="text-stone-900 text-base">Обработка текста на сайте</h3>
-						<Line
-							percent={100 * (state.simplifyQueue.processed / state.simplifyQueue.sended)}
-							strokeColor={"#2b7fff"}
-						/>
-					</div>
+					<ProgressBar
+						currentValue={state.simplifyQueue.processed}
+						maxValue={state.simplifyQueue.sended}
+						label="Обработка текста на сайте"
+					/>
 				)}
 			</div>
 		</div>

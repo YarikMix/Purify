@@ -7,10 +7,9 @@ import {toggleFilterImages} from "@pages/content/aggression/images";
 import {T_AppState} from "@src/utils/types";
 import {toggleSimplifyTextHotkey} from "@pages/content/simplify/hotkey";
 import {toggleSimplifyTextDynamic} from "@pages/content/simplify/automatic";
-import sendPageStats from "@pages/content/stats";
 import {DEFAULT_APP_STATE} from "@src/utils/state";
 import {isDomenIgnored, updateAppState} from "@pages/content/utils";
-import {ToggleAnalyzeVideo} from "@pages/content/video";
+import {toggleAnalyzeVideo} from "@pages/content/video";
 
 try {
 	console.log("content script loaded");
@@ -54,8 +53,6 @@ const initialize = () => {
 			state.aggressionFilterText && toggleFilterText(state.aggressionFilterText);
 			state.aggressionReplacementText && toggleReplacementText(state.aggressionReplacementText);
 			state.aggressionFilterImages && toggleFilterImages(state.aggressionFilterImages);
-
-			sendPageStats();
 		}
 
 		if (state.simplifyEnabled) {
@@ -67,7 +64,7 @@ const initialize = () => {
 		}
 
 		if (state.videoEnabled) {
-			ToggleAnalyzeVideo(state.videoEnabled);
+			toggleAnalyzeVideo(state.videoEnabled);
 		}
 	});
 
