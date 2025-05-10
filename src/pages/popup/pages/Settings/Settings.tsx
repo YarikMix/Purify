@@ -43,7 +43,7 @@ const Settings = () => {
 				</button>
 				<div className="flex justify-center items-center w-full">
 					<a href="https://t.me/Yaroslav738" target="_blank" rel="noreferrer">
-						<span className="text-stone-900 text-base">Связаться с разработчиками123</span>
+						<span className="text-stone-900 text-base">Связаться с разработчиками</span>
 					</a>
 				</div>
 			</div>
