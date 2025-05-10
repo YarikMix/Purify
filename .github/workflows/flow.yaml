@@ -1,0 +1,51 @@
+name: Check
+
+on: push
+
+jobs:
+  test-react-deploy:
+    name: deploy extension zip
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.12.0
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install deps
+        run: yarn install
+
+      - name: Build
+        run: npm run zip:linux
+
+      - name: List build directory contents
+        run: ls -al ./dist_chrome
+
+      - name: Upload build result
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: ./dist_chrome
+
+      - name: Очистка папки на сервере
+        uses: appleboy/ssh-action@master
+        with:
+          timeout: 10m
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: sudo rm -rf /opt/ext/*
+
+      - name: Деплой на сервер
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "dist_chrome.zip"
+          target: "/opt/ext/"
+          strip_components: 1
+          overwrite: true
