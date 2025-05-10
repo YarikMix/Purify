@@ -55,6 +55,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "dist_chrome.zip"
-          target: "/opt/ext/"
+          target: "/opt/ext"
           strip_components: 1
           overwrite: true
