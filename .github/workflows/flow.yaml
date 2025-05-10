@@ -19,7 +19,7 @@ jobs:
         run: yarn install
 
       - name: Build
-        run: npm run zip:linux
+        run: npm run build
 
       - name: List build directory contents
         run: ls -al ./dist_chrome
@@ -54,7 +54,6 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "dist_chrome/"
+          source: "dist_chrome/*"
           target: "/opt/ext/"
           strip_components: 1
-          overwrite: true
