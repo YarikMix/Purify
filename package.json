@@ -15,9 +15,9 @@
     "dev:chrome": "nodemon --config nodemon.chrome.json",
     "dev:firefox": "nodemon --config nodemon.firefox.json",
     "clear_dist:windows": "rd /s /q dist_chrome",
-    "clear_dist:macos": "todo",
-    "zip:windows": "npm run clear_dist:windows & npm run build & tar.exe -a -c -f dist_chrome.zip dist_chrome",
-    "zip:macos": "npm run clear_dist:windows & npm run build & todo"
+    "clear_dist:macos": "rm -rf dist_chrome",
+    "zip:windows": "npm run clear_dist:windows && npm run build && tar.exe -a -c -f dist_chrome.zip dist_chrome",
+    "zip:macos": "npm run clear_dist:macos && npm run build && zip -r dist_chrome.zip dist_chrome/*"
   },
   "type": "module",
   "dependencies": {
