@@ -1,59 +1,45 @@
-name: Check
+name: Deploy extension
 
 on: push
 
 jobs:
-  test-react-deploy:
+  deploy:
     name: deploy extension
     runs-on: ubuntu-latest
     steps:
-      - name: Install Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 22.12.0
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install deps
-        run: yarn install
-
-      - name: Build
-        run: npm run build
-
-      - name: List build directory contents
-        run: ls -al ./dist_chrome
-
-      - name: List directory contents
-        run: ls -al .
-
-      - name: Upload build result
-        uses: actions/upload-artifact@v4
-        with:
-          name: build folder
-          path: ./dist_chrome
-
-      - name: Upload build result2
-        uses: actions/upload-artifact@v4
-        with:
-          name: build archive
-          path: ./dist_chrome.zip
-
-      - name: Clear server dist folder
+      - name: Pull code
         uses: appleboy/ssh-action@master
         with:
-          timeout: 10m
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: sudo rm -rf /opt/ext/*
+          script: cd /home/${{ secrets.SERVER_USER }}/frontend/extension && git pull
 
-      - name: Deploy to server
-        uses: appleboy/scp-action@v0.1.7
+      - name: Build extension
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "dist_chrome/*"
-          target: "/opt/ext/"
-          strip_components: 1
+          script: |
+            cd /home/${{ secrets.SERVER_USER }}/frontend/extension
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            npm run zip:linux
+
+      - name: Copy dist to nginx folder
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: sudo cp -rf /home/${{ secrets.SERVER_USER }}/frontend/extension/dist_chrome.zip /opt/ext/
+
+      - name: Restart nginx
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/${{ secrets.SERVER_USER }}/code/Purify && docker-compose down nginx && docker-compose up -d nginx
