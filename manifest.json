@@ -5,11 +5,11 @@
   "action": {
     "default_popup": "src/pages/popup/index.html",
     "default_icon": {
-      "32": "icon-32.png"
+      "32": "logo.png"
     }
   },
   "icons": {
-    "128": "icon-128.png"
+    "128": "logo.png"
   },
   "permissions": [
     "activeTab",
@@ -45,9 +45,6 @@
       ],
       "js": [
         "src/pages/content/index.tsx"
-      ],
-      "css": [
-        "contentStyle.css"
       ]
     }
   ],
@@ -55,9 +52,7 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "contentStyle.css",
-        "icon-128.png",
-        "icon-32.png"
+        "logo.png"
       ],
       "matches": []
     }

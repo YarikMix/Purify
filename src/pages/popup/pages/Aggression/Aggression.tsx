@@ -1,67 +1,24 @@
 import Toggle from "@pages/popup/components/Toggle/Toggle";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef} from "react";
 import Option from "@pages/popup/components/Option/Option";
-import SiteSecurityInfo from "@pages/popup/components/SiteSecurityInfo/SiteSecurityInfo";
-import InfoBlockAggressive from "@pages/popup/components/InfoBlockAggressive/InfoBlockAggressive";
-import {T_AggressionState, T_Stats} from "@src/types";
 import {animated, useSpring} from "react-spring";
-import {AGGRESSIVE_THRESHOLD} from "@src/consts";
+import useAppState from "@pages/popup/hooks/useAppState";
+import ProgressBar from "@pages/popup/components/ProgressBar/ProgressBar";
 
 const Aggression = () => {
-	const [state, setState] = useState<T_AggressionState>(null);
-
-	const [stats, setStats] = useState<T_Stats>(null);
-
-	useEffect(() => {
-		chrome.storage.sync.get<T_AggressionState>(
-			[
-				"aggressionEnabled",
-				"aggressionFilterText",
-				"aggressionFilterImages",
-				"aggressionReplacementText",
-				"aggressionShowOriginalText",
-				"aggressionStats",
-			],
-			(state) => {
-				setState(state);
-				setStats(state.aggressionStats);
-			},
-		);
-
-		chrome.storage.onChanged.addListener((updatedState) => {
-			if ("aggressionStats" in updatedState) {
-				setStats(updatedState.aggressionStats.newValue);
-			}
-		});
-	}, []);
+	const [state, setState] = useAppState();
 
 	const handleToggleAggressionEnabled = () => {
-		chrome.storage.sync.set({
-			aggressionEnabled: !state.aggressionEnabled,
-			aggressionFilterText: !state.aggressionEnabled,
-			aggressionReplacementText: false,
-			aggressionShowOriginalText: false,
-		});
-
 		setState({
-			...state,
 			aggressionEnabled: !state.aggressionEnabled,
 			aggressionFilterText: !state.aggressionEnabled,
 			aggressionReplacementText: false,
 			aggressionShowOriginalText: false,
-			aggressionFilterImages: false,
 		});
 	};
 
 	const handleToggleFilterText = () => {
-		chrome.storage.sync.set({
-			aggressionFilterText: !state.aggressionFilterText,
-			aggressionReplacementText: false,
-			aggressionShowOriginalText: false,
-		});
-
 		setState({
-			...state,
 			aggressionFilterText: !state.aggressionFilterText,
 			aggressionReplacementText: false,
 			aggressionShowOriginalText: false,
@@ -75,14 +32,7 @@ const Aggression = () => {
 			aggressionShowOriginalTextNewValue = false;
 		}
 
-		chrome.storage.sync.set<T_AggressionState>({
-			aggressionFilterText: false,
-			aggressionReplacementText: !state.aggressionReplacementText,
-			aggressionShowOriginalText: aggressionShowOriginalTextNewValue,
-		});
-
 		setState({
-			...state,
 			aggressionFilterText: false,
 			aggressionReplacementText: !state.aggressionReplacementText,
 			aggressionShowOriginalText: aggressionShowOriginalTextNewValue,
@@ -90,23 +40,13 @@ const Aggression = () => {
 	};
 
 	const handleToggleShowOriginalText = () => {
-		chrome.storage.sync.set({
-			aggressionShowOriginalText: !state.aggressionShowOriginalText,
-		});
-
 		setState({
-			...state,
 			aggressionShowOriginalText: !state.aggressionShowOriginalText,
 		});
 	};
 
 	const handleToggleFilterImages = () => {
-		chrome.storage.sync.set({
-			aggressionFilterImages: !state.aggressionFilterImages,
-		});
-
 		setState({
-			...state,
 			aggressionFilterImages: !state.aggressionFilterImages,
 		});
 	};
@@ -160,15 +100,12 @@ const Aggression = () => {
 					/>
 				</animated.nav>
 			</div>
-			{state.aggressionEnabled && stats && stats.wordsReplaced > 0 && stats.wordsAnalyzed > 0 && (
-				<div className="flex flex-col gap-4 items-center">
-					<SiteSecurityInfo
-						aggressive={
-							Math.round(stats.wordsReplaced * 1.5) / stats.wordsAnalyzed > AGGRESSIVE_THRESHOLD
-						}
-					/>
-					<InfoBlockAggressive replaced={Math.round(stats.wordsReplaced * 1.5)} total={stats.wordsAnalyzed} />
-				</div>
+			{state.aggressionEnabled && state.aggressionReplacementText && (
+				<ProgressBar
+					currentValue={state.aggressionQueue.processed}
+					maxValue={state.aggressionQueue.sended}
+					label="Обработка текста на сайте"
+				/>
 			)}
 		</div>
 	);
