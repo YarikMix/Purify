@@ -52,8 +52,7 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "icon-128.png",
-        "icon-32.png"
+        "logo.png"
       ],
       "matches": []
     }
