@@ -1,5 +1,6 @@
 import $ from "jquery";
 import axios from "axios";
+import {IS_DEBUG} from "@src/utils/consts";
 
 type T_ContentStorage = {
 	intervalId: number | null;
@@ -78,7 +79,7 @@ const analyzeVideo = async (video: HTMLVideoElement) => {
 			}
 		}, 100);
 
-		const response = await axios.post("http://localhost:5003/transcribe", {
+		const response = await axios.post(IS_DEBUG ? "http://localhost:5003/transcribe" : "https://purify.pro/ml/transcribe", {
 			url: document.URL,
 		});
 		const isDanger = response.data.analysis.label == "not_valid";
