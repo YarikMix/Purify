@@ -2,7 +2,7 @@ import {throttle} from "throttle-debounce";
 import {getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import highlight from "@pages/content/aggression/filter/highlight";
-import {IS_DEBUG} from "@src/utils/consts";
+import {BLACK_LIST_WORDS, IS_DEBUG} from "@src/utils/consts";
 
 const throttled = throttle(100, () => {
 	analyzeAggression();
@@ -30,6 +30,8 @@ export const toggleFilterText = (enabled: boolean) => {
 	}
 };
 
+const minWordsCount = 5;
+
 const analyzedBlocks: string[] = [];
 
 export const analyzeAggression = async () => {
@@ -41,7 +43,13 @@ export const analyzeAggression = async () => {
 	while (currentNode) {
 		if (currentNode && currentNode.textContent && currentNode.parentElement && isVisibleInViewport(currentNode.parentElement)) {
 			const text = currentNode.textContent.trim().toLocaleLowerCase();
-			if (text.length > 0 && !text.includes("function") && !text.includes("self") && !analyzedBlocks.includes(text)) {
+			const words = text.split(/\s+/);
+			if (
+				text.length > 0 &&
+				!BLACK_LIST_WORDS.some((token) => text.includes(token)) &&
+				words.length >= minWordsCount &&
+				!analyzedBlocks.includes(text)
+			) {
 				blocks.push(text);
 				analyzedBlocks.push(text);
 			}
