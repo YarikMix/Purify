@@ -1,37 +1,17 @@
 import Toggle from "@pages/popup/components/Toggle/Toggle";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef} from "react";
 import KeyboardTooltip from "@pages/popup/components/KeyboardTooltip/KeyboardTooltip";
 import InfoBlockSimplify from "@pages/popup/components/InfoBlockSimplify/InfoBlockSimplify";
-import {T_SimplifyState, T_Stats} from "@src/types";
 import {animated, useSpring} from "react-spring";
-import {DEFAULT_SIMPLIFY_STATE} from "@src/state";
 import {Dropdown} from "@pages/popup/components/Dropdown/Dropdown";
+import ProgressBar from "@pages/popup/components/ProgressBar/ProgressBar";
+import useAppState from "@pages/popup/hooks/useAppState";
 
 export const Simplify = () => {
-	const [state, setState] = useState<T_SimplifyState>(null);
-
-	const [stats, setStats] = useState<T_Stats>(null);
-
-	useEffect(() => {
-		chrome.storage.sync.get<T_SimplifyState>(DEFAULT_SIMPLIFY_STATE, (state) => {
-			setState(state);
-			setStats(state.simplifyStats);
-		});
-
-		chrome.storage.onChanged.addListener((updatedState) => {
-			if ("simplifyStats" in updatedState) {
-				setStats(updatedState.simplifyStats.newValue);
-			}
-		});
-	}, []);
+	const [state, setState] = useAppState();
 
 	const handleToggleSimplifyEnabled = () => {
-		chrome.storage.sync.set({
-			simplifyEnabled: !state.simplifyEnabled,
-		});
-
 		setState({
-			...state,
 			simplifyEnabled: !state.simplifyEnabled,
 		});
 	};
@@ -82,11 +62,25 @@ export const Simplify = () => {
 					)}
 				</animated.nav>
 			</div>
-			{state.simplifyEnabled && stats && stats.wordsReplaced > 0 && stats.wordsAnalyzed > 0 && (
-				<div className="flex w-full justify-center">
-					<InfoBlockSimplify replaced={stats.wordsReplaced} total={stats.wordsAnalyzed} />
-				</div>
-			)}
+			<div className="flex flex-col gap-4">
+				{state.simplifyEnabled &&
+					state.simplifyStats.wordsReplaced > 0 &&
+					state.simplifyStats.wordsAnalyzed > 0 && (
+						<div className="flex w-full justify-center">
+							<InfoBlockSimplify
+								replaced={state.simplifyStats.wordsReplaced}
+								total={state.simplifyStats.wordsAnalyzed}
+							/>
+						</div>
+					)}
+				{state.simplifyEnabled && state.simplifyDynamic && (
+					<ProgressBar
+						currentValue={state.simplifyQueue.processed}
+						maxValue={state.simplifyQueue.sended}
+						label="Обработка текста на сайте"
+					/>
+				)}
+			</div>
 		</div>
 	);
 };

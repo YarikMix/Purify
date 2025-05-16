@@ -1,7 +1,7 @@
 import {getImages, getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import {throttle} from "throttle-debounce";
-import {API_URL, BACKEND_URL} from "@src/consts";
+import {API_URL, BACKEND_URL} from "@src/utils/consts";
 
 const analyzedImagesDict: Record<string, string> = {};
 
