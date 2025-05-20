@@ -1,7 +1,7 @@
 import axios from "axios";
 import hotkeys from "hotkeys-js";
-import {API_URL} from "@src/consts";
-import {T_SimplifyState} from "@src/types";
+import {API_URL} from "@src/utils/consts";
+import {T_SimplifyState} from "@src/utils/types";
 
 export const toggleSimplifyTextHotkey = async (enabled: boolean) => {
 	console.log("simplifyTextInit");
@@ -38,7 +38,10 @@ export const toggleSimplifyTextHotkey = async (enabled: boolean) => {
 						if (to && selection?.focusNode) {
 							const parent = selection.focusNode.parentElement as HTMLElement;
 
-							parent.innerText = parent.innerText.replace(selection.toString(), response.data.result[0].to);
+							parent.innerText = parent.innerText.replace(
+								selection.toString(),
+								response.data.result[0].to,
+							);
 							parent.style.fontWeight = "bold";
 							parent.style.fontStyle = "italic";
 

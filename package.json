@@ -1,11 +1,11 @@
 {
   "name": "vite-web-extension",
-  "version": "1.4.0",
-  "description": "A simple chrome & firefox extension template with Vite, React, TypeScript and Tailwind CSS.",
+  "version": "1.0.0",
+  "description": "Браузерное расширение для защиты от агрессивного контента в интернете.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JohnBra/vite-web-extension.git"
+    "url": "https://github.com/YarikMix/Purify.git"
   },
   "scripts": {
     "build": "vite build --config vite.config.chrome.ts",
@@ -13,7 +13,11 @@
     "build:firefox": "vite build --config vite.config.firefox.ts",
     "dev": "nodemon --config nodemon.chrome.json",
     "dev:chrome": "nodemon --config nodemon.chrome.json",
-    "dev:firefox": "nodemon --config nodemon.firefox.json"
+    "dev:firefox": "nodemon --config nodemon.firefox.json",
+    "clear_dist:windows": "if exist dist_chrome rd /s /q dist_chrome",
+    "clear_dist:linux": "rm -rf dist_chrome",
+    "zip:windows": "npm run clear_dist:windows && npm run build && tar.exe -a -c -f dist_chrome.zip dist_chrome",
+    "zip:linux": "npm run clear_dist:linux && npm run build && zip -r dist_chrome.zip dist_chrome/*"
   },
   "type": "module",
   "dependencies": {
@@ -27,6 +31,7 @@
     "jquery": "^3.7.1",
     "mark.js": "^8.11.1",
     "prettier": "^3.5.3",
+    "rc-progress": "^4.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
