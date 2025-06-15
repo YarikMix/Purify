@@ -50,4 +50,4 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: sudo cp -rf /home/${{ secrets.SERVER_USER }}/frontend/extension/dist_chrome.zip /opt/ext/
+          script: sudo cp -rf /home/${{ secrets.SERVER_USER }}/frontend/extension/dist_purify.zip /opt/ext/
