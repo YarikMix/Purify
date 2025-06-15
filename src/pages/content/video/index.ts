@@ -1,26 +1,29 @@
 import $ from "jquery";
-import axios from "axios";
+import axios, {CancelToken} from "axios";
 import {IS_DEBUG} from "@src/utils/consts";
 
 type T_ContentStorage = {
 	intervalId: number | null;
 	autoplay: boolean;
-	videoNodes: string[];
+	videoNodes: Set<string>;
+	videoAnalyzed: Set<string>;
+	safeVideo: Set<string>;
 };
 
 const contentStorage: T_ContentStorage = {
 	intervalId: null,
 	autoplay: false,
-	videoNodes: [],
+	videoNodes: new Set(),
+	videoAnalyzed: new Set(),
+	safeVideo: new Set(),
 };
 
 const analyzeVideo = async (video: HTMLVideoElement) => {
 	console.log("analyzeVideo");
 	console.log("video.src", video.src);
-	console.log("contentStorage.videoNodes.includes(video.src)", contentStorage.videoNodes.includes(video.src));
-	if (!contentStorage.videoNodes.includes(video.src)) {
-		contentStorage.videoNodes.push(video.src);
-
+	console.log("contentStorage.videoNodes.includes(video.src)", contentStorage.videoNodes.has(document.URL));
+	console.log("contentStorage.safeVideo.has(document.URL)", contentStorage.safeVideo.has(document.URL));
+	if (!contentStorage.videoNodes.has(document.URL) && !contentStorage.safeVideo.has(document.URL)) {
 		const interval = setInterval(() => {
 			video.pause();
 			video.removeAttribute("autoplay");
@@ -29,6 +32,7 @@ const analyzeVideo = async (video: HTMLVideoElement) => {
 		console.log("video", video);
 
 		console.log("document.URL", document.URL);
+		console.log("window.location.href", window.location.href);
 
 		console.log("video.src", video.src);
 
@@ -48,7 +52,7 @@ const analyzeVideo = async (video: HTMLVideoElement) => {
 		// };
 
 		setTimeout(() => {
-			const videoContainer = $("ytd-player[id='ytd-player']");
+			const videoContainer = $("ytd-player[id='ytd-player'], #video_player");
 			console.log("videoContainer", videoContainer);
 			if (videoContainer.length) {
 				videoContainer.css("position", "relative");
@@ -75,14 +79,49 @@ const analyzeVideo = async (video: HTMLVideoElement) => {
 					loaderContainer.append(loader);
 
 					videoContainer.append(loaderContainer);
+
+					contentStorage.videoNodes.add(document.URL);
 				}
 			}
 		}, 100);
 
-		const response = await axios.post(IS_DEBUG ? "http://localhost:5003/transcribe" : "https://purify.pro/ml/transcribe", {
-			url: document.URL,
-		});
-		const isDanger = response.data.analysis.label == "not_valid";
+		let isDanger = false;
+
+		console.log("ASEFASDFASFASD");
+
+		if (contentStorage.videoAnalyzed.has(document.URL)) {
+			return;
+		}
+
+		try {
+			const source = CancelToken.source();
+			setTimeout(() => {
+				source.cancel();
+			}, 3000);
+
+			console.log("send request");
+
+			contentStorage.videoAnalyzed.add(document.URL);
+
+			const response = await axios.post(
+				IS_DEBUG ? "http://localhost:5003/transcribe" : "https://purify.pro/ml/transcribe",
+				{
+					url: document.URL,
+					cancelToken: source.token,
+					timeout: 3000,
+				},
+			);
+
+			isDanger = response.data.analysis.label == "not_valid";
+		} catch (error) {
+			console.log("error1234");
+			isDanger = false;
+		}
+
+		if (!isDanger) {
+			contentStorage.safeVideo.add(document.URL);
+		}
+
 		console.log("isDanger", isDanger);
 
 		if (isDanger) {
@@ -115,9 +154,7 @@ const analyzeVideo = async (video: HTMLVideoElement) => {
 			loaderContainer.contains(loader) && loaderContainer.removeChild(loader);
 
 			setTimeout(() => {
-				const videoContainer = $("ytd-player[id='ytd-player']");
 				const loaderContainer = $("#purify-video-analyze-container");
-				console.log("videoContainer", videoContainer);
 				console.log("loaderContainer.length", loaderContainer.length);
 				if (loaderContainer.length) {
 					loaderContainer.remove();
