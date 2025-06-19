@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+body {
+  width: 400px;
+  height: 500px;
+  margin: 0;
+  font-family: "Nunito", sans-serif;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  position: relative;
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution" : "https://purify.pro/api/v1/swap_image?originalUrl=\\0"
+      }
+    },
+    "condition": {
+      "resourceTypes": ["image"],
+      "regexFilter": "^https://purify.pro/assets/(.*)"
+    }
+  }
+]

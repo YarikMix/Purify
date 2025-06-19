@@ -1,0 +1,57 @@
+/* Tooltip container */
+.highlight__tooltip {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    padding: 6px;
+    border-radius: 6px;
+    background-color: black;
+}
+
+/* Tooltip text */
+.highlight__tooltip-text {
+    width: 120px;
+    color: #fff;
+    text-align: center;
+}
+
+#purify-video-analyze-container {
+    background: #000;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 1001;
+}
+
+#purify-video-analyze-container h1 {
+    font-size: 32px;
+    color: #fff;
+}
+
+#purify-video-analyze-loader {
+    display: block;
+    width: 100px;
+    height: 100px;
+    border: 10px solid transparent;
+    border-radius: 50%;
+    border-right-color: rgba(255, 255, 255, 0.7);
+    animation: spinner-anim 0.8s linear infinite;
+}
+
+@keyframes spinner-anim {
+    from {
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

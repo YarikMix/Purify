@@ -1,0 +1,9 @@
+{
+  "action": {
+    "default_icon": "public/logo.png",
+    "default_popup": "src/pages/popup/index.html"
+  },
+  "icons": {
+    "64": "public/logo.png"
+  }
+}

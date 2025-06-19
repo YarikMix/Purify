@@ -1,0 +1,9 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 8px;
+    background: #FBF9FF;
+    color: #A080C9;
+    padding: 12px;
+}
