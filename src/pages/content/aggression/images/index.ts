@@ -1,7 +1,7 @@
 import {getImages, getScrolledElems, isVisibleInViewport} from "@pages/content/utils";
 import axios from "axios";
 import {throttle} from "throttle-debounce";
-import {API_URL, BACKEND_URL} from "@src/utils/consts";
+import {API_URL, BACKEND_URL, IMAGES_URL} from "@src/utils/consts";
 
 const analyzedImagesDict: Record<string, string> = {};
 
@@ -92,7 +92,7 @@ const analyzeImage = async (img: HTMLImageElement) => {
 };
 
 const replaceImageSrc = (img: HTMLImageElement, url: string) => {
-	const newSrc = BACKEND_URL + url;
+	const newSrc = IMAGES_URL + url;
 
 	analyzedImagesDict[img.src] = url;
 	analyzedImages.push(newSrc);
